@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
 // Prevent static prerendering of this route during build
@@ -9,6 +8,9 @@ export async function POST(req: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({ error: 'Stripe API key not configured' }, { status: 500 });
   }
+
+  // Dynamic import to prevent module-level evaluation during build
+  const Stripe = (await import('stripe')).default;
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2023-10-16' as any,
@@ -20,7 +22,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Webhook secret o firma faltante / por defecto' }, { status: 400 });
   }
 
-  let event: Stripe.Event;
+  let event: any;
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
@@ -48,7 +50,7 @@ export async function POST(req: Request) {
   try {
     // 1. Pago inicial completado de forma exitosa
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object;
       const userId = session.metadata?.user_id;
 
       if (!userId) {
@@ -68,7 +70,7 @@ export async function POST(req: Request) {
     
     // 2. Suscripción cancelada / expirada
     else if (event.type === 'customer.subscription.deleted') {
-      const subscription = event.data.object as Stripe.Subscription;
+      const subscription = event.data.object;
       const userId = subscription.metadata?.user_id;
 
       if (!userId) {
@@ -92,3 +94,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message || 'Error interno del servidor' }, { status: 500 });
   }
 }
+
