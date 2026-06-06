@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import Header from "@/components/layout/Header";
 import Navigation, { TabType } from "@/components/layout/Navigation";
 import CoachTab from "@/components/tabs/CoachTab";
@@ -24,42 +23,28 @@ export default function AppHome() {
     return () => window.removeEventListener("change-tab", handleTabChange);
   }, []);
 
-  const renderTab = () => {
-    switch (activeTab) {
-      case "coach":
-        return <CoachTab />;
-      case "afirmaciones":
-        return <AffirmationsTab />;
-      case "metas":
-        return <GoalsTab />;
-      case "gratitud":
-        return <GratitudeTab />;
-      case "visualizar":
-        return <VisualizeTab />;
-      default:
-        return <CoachTab />;
-    }
-  };
-
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-background transition-colors duration-300 sm:relative sm:min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 sm:px-4">
       <div className="w-full h-full max-w-[680px] sm:h-[780px] bg-bg-primary sm:border border-border-secondary sm:rounded-3xl sm:shadow-2xl overflow-hidden flex flex-col relative border-border-primary/80 transition-colors duration-300">
         <Header />
         
-        {/* Contenedor principal del contenido que se anima */}
+        {/* Contenedor principal del contenido de las pestañas */}
         <main className="flex-1 relative overflow-hidden bg-bg-primary">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute inset-0"
-            >
-              {renderTab()}
-            </motion.div>
-          </AnimatePresence>
+          <div className={`absolute inset-0 transition-all duration-200 ${activeTab === "coach" ? "opacity-100 pointer-events-auto z-10 scale-100" : "opacity-0 pointer-events-none z-0 scale-[0.98]"}`}>
+            <CoachTab />
+          </div>
+          <div className={`absolute inset-0 transition-all duration-200 ${activeTab === "afirmaciones" ? "opacity-100 pointer-events-auto z-10 scale-100" : "opacity-0 pointer-events-none z-0 scale-[0.98]"}`}>
+            <AffirmationsTab />
+          </div>
+          <div className={`absolute inset-0 transition-all duration-200 ${activeTab === "metas" ? "opacity-100 pointer-events-auto z-10 scale-100" : "opacity-0 pointer-events-none z-0 scale-[0.98]"}`}>
+            <GoalsTab />
+          </div>
+          <div className={`absolute inset-0 transition-all duration-200 ${activeTab === "gratitud" ? "opacity-100 pointer-events-auto z-10 scale-100" : "opacity-0 pointer-events-none z-0 scale-[0.98]"}`}>
+            <GratitudeTab />
+          </div>
+          <div className={`absolute inset-0 transition-all duration-200 ${activeTab === "visualizar" ? "opacity-100 pointer-events-auto z-10 scale-100" : "opacity-0 pointer-events-none z-0 scale-[0.98]"}`}>
+            <VisualizeTab />
+          </div>
         </main>
 
         <Navigation activeTab={activeTab} onChangeTab={setActiveTab} />

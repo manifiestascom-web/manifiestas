@@ -33,29 +33,34 @@ export default function GoalsTab() {
 
   useEffect(() => {
     const fetchUserAndGoals = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        
-        // Cargar perfil y metas en paralelo
-        const [profileResult, goalsResult] = await Promise.all([
-          supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
-          supabase.from('goals').select('*').order('created_at', { ascending: false })
-        ]);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUser(user);
+          
+          // Cargar perfil y metas en paralelo con maybeSingle para evitar excepciones
+          const [profileResult, goalsResult] = await Promise.all([
+            supabase.from('profiles').select('subscription_tier').eq('id', user.id).maybeSingle(),
+            supabase.from('goals').select('*').order('created_at', { ascending: false })
+          ]);
 
-        const profile = profileResult.data;
-        const goalsData = goalsResult.data;
-        const goalsError = goalsResult.error;
+          const profile = profileResult.data;
+          const goalsData = goalsResult.data;
+          const goalsError = goalsResult.error;
 
-        if (profile) {
-          setIsPro(profile.subscription_tier === 'pro');
+          if (profile) {
+            setIsPro(profile.subscription_tier === 'pro');
+          }
+
+          if (!goalsError && goalsData) {
+            setGoals(goalsData);
+          }
         }
-
-        if (!goalsError && goalsData) {
-          setGoals(goalsData);
-        }
+      } catch (err) {
+        console.error("Error al cargar metas:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchUserAndGoals();

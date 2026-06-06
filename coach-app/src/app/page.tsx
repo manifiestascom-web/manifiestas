@@ -62,8 +62,8 @@ const affirmationsByCategory: Record<string, string[]> = {
 // FAQ data
 const faqs = [
   {
-    question: "¿Qué es Manifiestas AI?",
-    answer: "Manifiestas AI es un coach interactivo que combina psicología cognitiva, neurociencia y el arte de la manifestación para ayudarte a reprogramar tu subconsciente. Ofrece diálogos con inteligencia artificial, generación de afirmaciones personalizadas, tableros de visualización y herramientas interactivas."
+    question: "¿Qué es Manifiestas?",
+    answer: "Manifiestas es un coach interactivo que combina psicología cognitiva, neurociencia y el arte de la manifestación para ayudarte a reprogramar tu subconsciente. Ofrece diálogos con inteligencia artificial, generación de afirmaciones personalizadas, tableros de visualización y herramientas interactivas."
   },
   {
     question: "¿Cómo funciona el Coach de Manifestación?",
@@ -224,7 +224,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-wider text-text-primary">
             <span className="text-accent-gold text-2xl">✨</span>
-            <span className="font-extrabold tracking-tight">MANIFIESTAS AI</span>
+            <span className="font-extrabold tracking-tight">MANIFIESTAS</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-text-secondary">
@@ -503,7 +503,7 @@ export default function LandingPage() {
               <div className="px-2 py-1.5 bg-gradient-to-br from-primary-dark to-primary text-white flex justify-between items-center shrink-0 shadow-sm">
                 <div>
                   <div className="text-[7.5px] font-bold flex items-center gap-0.5">
-                    ✨ Manifiestas AI
+                    ✨ Manifiestas
                   </div>
                   <div className="text-[5.5px] opacity-80 leading-none">
                     Tu coach de manifestación
@@ -647,7 +647,7 @@ export default function LandingPage() {
                 <div className="absolute -top-4 -right-4 w-14 h-14 bg-white/10 rounded-full blur-xl" />
                 <div className="relative z-10">
                   <div className="text-[11px] font-semibold flex items-center gap-1">
-                    ✨ Manifiestas AI
+                    ✨ Manifiestas
                   </div>
                   <div className="text-[8px] opacity-85 leading-tight">
                     Tu coach de manifestación — 24/7
@@ -732,7 +732,7 @@ export default function LandingPage() {
               <span className="bg-gradient-to-r from-primary to-accent-gold bg-clip-text text-transparent">transformando</span>
             </p>
             <p className="text-text-secondary max-w-xl mx-auto">
-              Más de 2,000 mujeres ya están alineando su frecuencia y manifestando sus deseos con Manifiestas AI.
+              Más de 2,000 mujeres ya están alineando su frecuencia y manifestando sus deseos con Manifiestas.
             </p>
           </div>
 
@@ -891,7 +891,7 @@ export default function LandingPage() {
                 Diseñado para acompañarte en tus momentos de calma
               </h3>
               <p className="text-text-secondary text-base leading-relaxed">
-                Manifestar no es solo desear; es entrenar al cerebro para sintonizar con la gratitud y la abundancia en tu rutina diaria. Abre Manifiestas AI al despertar o antes de dormir, y deja que tu mentor digital limpie el ruido mental del día de forma guiada y sin complicaciones.
+                Manifestar no es solo desear; es entrenar al cerebro para sintonizar con la gratitud y la abundancia en tu rutina diaria. Abre Manifiestas al despertar o antes de dormir, y deja que tu mentor digital limpie el ruido mental del día de forma guiada y sin complicaciones.
               </p>
               
               <div className="space-y-4 pt-2">
@@ -925,7 +925,7 @@ export default function LandingPage() {
         
         <div className="relative z-10 max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
-            <p className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight">Siente el poder de Manifiestas AI</p>
+            <p className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight">Siente el poder de Manifiestas</p>
             <p className="text-text-secondary">Prueba nuestras dos herramientas principales directamente en la landing page.</p>
           </div>
 
@@ -1561,7 +1561,7 @@ export default function LandingPage() {
           <div className="pt-20 border-t border-border-primary dark:border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-text-secondary">
             <div className="flex items-center gap-2">
               <span className="text-accent-gold text-lg">✨</span>
-              <span className="font-extrabold text-text-primary">MANIFIESTAS AI</span>
+              <span className="font-extrabold text-text-primary">MANIFIESTAS</span>
               <span>© {new Date().getFullYear()} Todos los derechos reservados.</span>
             </div>
             

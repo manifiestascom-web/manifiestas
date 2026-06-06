@@ -17,8 +17,8 @@ const APP_URL = "https://manifiestas.ai";
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "Manifiestas AI — Tu Coach de Manifestación con IA",
-    template: "%s | Manifiestas AI",
+    default: "Manifiestas — Tu Coach de Manifestación con IA",
+    template: "%s | Manifiestas",
   },
   description:
     "Reprograma tu mente, decreta afirmaciones personalizadas y atrae la vida que mereces con tu coach de manifestación personal disponible 24/7.",
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     "meditación",
     "mentalidad positiva",
   ],
-  authors: [{ name: "Manifiestas AI" }],
-  creator: "Manifiestas AI",
-  publisher: "Manifiestas AI",
+  authors: [{ name: "Manifiestas" }],
+  creator: "Manifiestas",
+  publisher: "Manifiestas",
   robots: {
     index: true,
     follow: true,
@@ -47,8 +47,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: APP_URL,
-    siteName: "Manifiestas AI",
-    title: "Manifiestas AI — Tu Coach de Manifestación con IA",
+    siteName: "Manifiestas",
+    title: "Manifiestas — Tu Coach de Manifestación con IA",
     description:
       "Reprograma tu mente, decreta afirmaciones personalizadas y atrae la vida que mereces. Tu coach espiritual personal disponible 24/7.",
     locale: "es_ES",
@@ -57,13 +57,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Manifiestas AI — Coach de Manifestación con Inteligencia Artificial",
+        alt: "Manifiestas — Coach de Manifestación con Inteligencia Artificial",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Manifiestas AI — Tu Coach de Manifestación con IA",
+    title: "Manifiestas — Tu Coach de Manifestación con IA",
     description:
       "Reprograma tu mente y atrae la vida que mereces. Coach espiritual con IA disponible 24/7.",
     images: ["/og-image.png"],

@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Política de Privacidad | Manifiestas AI",
-  description: "Política de privacidad y tratamiento de datos personales de Manifiestas AI.",
+  title: "Política de Privacidad | Manifiestas",
+  description: "Política de privacidad y tratamiento de datos personales de Manifiestas.",
 };
 
 export default function PrivacyPage() {
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             <section className="space-y-3">
               <h2 className="text-lg font-bold text-white">4. Privacidad de las Conversaciones con la IA</h2>
               <p>
-                En <strong>Manifiestas AI</strong> respetamos la naturaleza íntima y privada de tus decretos, metas y reflexiones. Tus conversaciones con el Coach cognitivo y tus diarios son privados y no se comparten con terceros, utilizándose exclusivamente para el procesamiento instantáneo del modelo de lenguaje de Inteligencia Artificial de forma segura y cifrada.
+                En <strong>Manifiestas</strong> respetamos la naturaleza íntima y privada de tus decretos, metas y reflexiones. Tus conversaciones con el Coach cognitivo y tus diarios son privados y no se comparten con terceros, utilizándose exclusivamente para el procesamiento instantáneo del modelo de lenguaje de Inteligencia Artificial de forma segura y cifrada.
               </p>
             </section>
 

@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     if (saveUserErr) throw saveUserErr;
 
     // 5. Configurar el prompt de sistema del Coach de Manifestación
-    const systemPrompt = `Eres "Manifiestas AI", un coach espiritual de manifestación de alta vibración.
+    const systemPrompt = `Eres "Manifiestas", un coach espiritual de manifestación de alta vibración.
 
 REGLAS DE FORMATO (OBLIGATORIAS):
 - Responde SIEMPRE en máximo 2-3 oraciones cortas y poderosas. Nunca más.

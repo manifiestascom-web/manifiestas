@@ -69,38 +69,43 @@ export default function AffirmationsTab() {
 
   useEffect(() => {
     const fetchUserAndChallenge = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        
-        // Cargar perfil y reto en paralelo
-        const profilePromise = supabase.from('profiles').select('subscription_tier').eq('id', user.id).single();
-        const challengePromise = selectedArea === 'mis_decretos' 
-          ? Promise.resolve({ data: null, error: null })
-          : supabase.from('challenges').select('*').eq('user_id', user.id).eq('area', selectedArea).maybeSingle();
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUser(user);
+          
+          // Cargar perfil y reto en paralelo con maybeSingle para evitar excepciones
+          const profilePromise = supabase.from('profiles').select('subscription_tier').eq('id', user.id).maybeSingle();
+          const challengePromise = selectedArea === 'mis_decretos' 
+            ? Promise.resolve({ data: null, error: null })
+            : supabase.from('challenges').select('*').eq('user_id', user.id).eq('area', selectedArea).maybeSingle();
 
-        const [profileResult, challengeResult] = await Promise.all([
-          profilePromise,
-          challengePromise
-        ]);
+          const [profileResult, challengeResult] = await Promise.all([
+            profilePromise,
+            challengePromise
+          ]);
 
-        const profile = profileResult.data;
-        const challengeData = challengeResult.data;
-        const challengeError = challengeResult.error;
+          const profile = profileResult.data;
+          const challengeData = challengeResult.data;
+          const challengeError = challengeResult.error;
 
-        if (profile) {
-          setIsPro(profile.subscription_tier === 'pro');
+          if (profile) {
+            setIsPro(profile.subscription_tier === 'pro');
+          }
+
+          if (selectedArea === 'mis_decretos') {
+            setActiveChallenge(null);
+          } else if (!challengeError && challengeData) {
+            setActiveChallenge(challengeData);
+          } else {
+            setActiveChallenge(null);
+          }
         }
-
-        if (selectedArea === 'mis_decretos') {
-          setActiveChallenge(null);
-        } else if (!challengeError && challengeData) {
-          setActiveChallenge(challengeData);
-        } else {
-          setActiveChallenge(null);
-        }
+      } catch (err) {
+        console.error("Error al cargar afirmaciones:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchUserAndChallenge();

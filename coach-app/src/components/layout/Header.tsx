@@ -60,7 +60,7 @@ export default function Header() {
     <header className="bg-gradient-to-br from-primary-dark to-primary p-5 sm:p-6 text-white shadow-md relative overflow-hidden shrink-0 flex justify-between items-center">
       <div className="relative z-10">
         <h1 className="text-xl font-semibold mb-1 flex items-center gap-2">
-          ✨ Manifiestas AI
+          ✨ Manifiestas
         </h1>
         <p className="text-xs sm:text-sm opacity-85">Tu coach de manifestación personal — disponible 24/7</p>
       </div>

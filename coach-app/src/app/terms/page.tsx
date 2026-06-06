@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Términos y Condiciones de Uso | Manifiestas AI",
-  description: "Términos y condiciones legales para utilizar el servicio de Manifiestas AI.",
+  title: "Términos y Condiciones de Uso | Manifiestas",
+  description: "Términos y condiciones legales para utilizar el servicio de Manifiestas.",
 };
 
 export default function TermsPage() {
@@ -32,14 +32,14 @@ export default function TermsPage() {
             <section className="space-y-3">
               <h2 className="text-lg font-bold text-white">1. Aceptación de los Términos</h2>
               <p>
-                Al acceder y utilizar <strong>Manifiestas AI</strong> (el "Servicio"), aceptas cumplir y quedar sujeto a estos Términos y Condiciones. Si no estás de acuerdo con alguna de estas condiciones, por favor abstente de utilizar el Servicio.
+                Al acceder y utilizar <strong>Manifiestas</strong> (el "Servicio"), aceptas cumplir y quedar sujeto a estos Términos y Condiciones. Si no estás de acuerdo con alguna de estas condiciones, por favor abstente de utilizar el Servicio.
               </p>
             </section>
 
             <section className="space-y-3">
               <h2 className="text-lg font-bold text-white">2. Descripción del Servicio</h2>
               <p>
-                <strong>Manifiestas AI</strong> es una plataforma SaaS que proporciona herramientas digitales orientadas al desarrollo personal, la reprogramación mental y el bienestar, tales como un coach cognitivo impulsado por Inteligencia Artificial, un diario de agradecimiento, y el Triángulo de Manifestación.
+                <strong>Manifiestas</strong> es una plataforma SaaS que proporciona herramientas digitales orientadas al desarrollo personal, la reprogramación mental y el bienestar, tales como un coach cognitivo impulsado por Inteligencia Artificial, un diario de agradecimiento, y el Triángulo de Manifestación.
               </p>
               <p className="text-indigo-300 font-medium">
                 Aviso importante: El Servicio se ofrece con fines educativos y de entretenimiento. La Inteligencia Artificial no reemplaza el asesoramiento, terapia o tratamiento médico o psicológico profesional.
@@ -63,7 +63,7 @@ export default function TermsPage() {
             <section className="space-y-3">
               <h2 className="text-lg font-bold text-white">5. Limitación de Responsabilidad</h2>
               <p>
-                En la máxima medida permitida por la ley, <strong>Manifiestas AI</strong> no será responsable de ningún daño indirecto, incidental, especial o consecuente resultante del uso o la incapacidad de usar el Servicio, o de cualquier consejo u orientación generados por la IA.
+                En la máxima medida permitida por la ley, <strong>Manifiestas</strong> no será responsable de ningún daño indirecto, incidental, especial o consecuente resultante del uso o la incapacidad de usar el Servicio, o de cualquier consejo u orientación generados por la IA.
               </p>
             </section>
 

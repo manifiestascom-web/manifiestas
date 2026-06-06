@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Política de Reembolso y Cancelación | Manifiestas AI",
-  description: "Política de reembolso, devoluciones y cancelación de suscripciones de Manifiestas AI.",
+  title: "Política de Reembolso y Cancelación | Manifiestas",
+  description: "Política de reembolso, devoluciones y cancelación de suscripciones de Manifiestas.",
 };
 
 export default function RefundsPage() {
@@ -32,7 +32,7 @@ export default function RefundsPage() {
             <section className="space-y-3">
               <h2 className="text-lg font-bold text-white">1. Política de Cancelación</h2>
               <p>
-                Puedes cancelar tu suscripción a <strong>Manifiestas AI Pro</strong> en cualquier momento. La cancelación se puede realizar directamente desde el apartado de "Mi Cuenta" o "Suscripción" en la aplicación, accediendo al portal seguro de facturación de Stripe.
+                Puedes cancelar tu suscripción a <strong>Manifiestas Pro</strong> en cualquier momento. La cancelación se puede realizar directamente desde el apartado de "Mi Cuenta" o "Suscripción" en la aplicación, accediendo al portal seguro de facturación de Stripe.
               </p>
               <p>
                 Al cancelar tu suscripción, seguirás teniendo acceso completo a los beneficios premium hasta que finalice tu período de facturación actual (mensual o anual). Al terminar dicho período, tu cuenta pasará automáticamente al plan gratuito básico y no se realizarán nuevos cobros.
@@ -56,7 +56,7 @@ export default function RefundsPage() {
                 Para solicitar tu reembolso, por favor envía un correo electrónico a: <strong>soporte@manifiestas.ai</strong> con el asunto <em>"Solicitud de Reembolso Pro"</em> e incluyendo la siguiente información:
               </p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>La dirección de correo electrónico asociada a tu cuenta de Manifiestas AI.</li>
+                <li>La dirección de correo electrónico asociada a tu cuenta de Manifiestas.</li>
                 <li>El número de recibo o comprobante de pago enviado por Stripe.</li>
                 <li>Un breve comentario opcional sobre tu experiencia para ayudarnos a mejorar nuestro servicio.</li>
               </ul>

@@ -28,36 +28,41 @@ export default function GratitudeTab() {
 
   useEffect(() => {
     const fetchUserAndEntries = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        const today = new Date().toISOString().split('T')[0];
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUser(user);
+          const today = new Date().toISOString().split('T')[0];
 
-        // Cargar todo en paralelo (perfil, registros y conteo de hoy)
-        const [profileResult, entriesResult, countResult] = await Promise.all([
-          supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
-          supabase.from('gratitude_entries').select('*').order('created_at', { ascending: false }),
-          supabase.from('gratitude_entries').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', today)
-        ]);
+          // Cargar todo en paralelo (perfil, registros y conteo de hoy) con maybeSingle para evitar excepciones
+          const [profileResult, entriesResult, countResult] = await Promise.all([
+            supabase.from('profiles').select('subscription_tier').eq('id', user.id).maybeSingle(),
+            supabase.from('gratitude_entries').select('*').order('created_at', { ascending: false }),
+            supabase.from('gratitude_entries').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', today)
+          ]);
 
-        const profile = profileResult.data;
-        const entriesData = entriesResult.data;
-        const entriesError = entriesResult.error;
-        const dailyCount = countResult.count ?? 0;
+          const profile = profileResult.data;
+          const entriesData = entriesResult.data;
+          const entriesError = entriesResult.error;
+          const dailyCount = countResult.count ?? 0;
 
-        if (profile) {
-          const userIsPro = profile.subscription_tier === 'pro';
-          setIsPro(userIsPro);
-          if (!userIsPro) {
-            setDailyEntryCount(dailyCount);
+          if (profile) {
+            const userIsPro = profile.subscription_tier === 'pro';
+            setIsPro(userIsPro);
+            if (!userIsPro) {
+              setDailyEntryCount(dailyCount);
+            }
+          }
+
+          if (!entriesError && entriesData) {
+            setEntries(entriesData);
           }
         }
-
-        if (!entriesError && entriesData) {
-          setEntries(entriesData);
-        }
+      } catch (err) {
+        console.error("Error al cargar datos de gratitud:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchUserAndEntries();
