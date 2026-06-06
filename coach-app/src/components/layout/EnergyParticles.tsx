@@ -14,7 +14,9 @@ export default function EnergyParticles() {
 
     let animationFrameId: number;
     let particles: Particle[] = [];
-    const particleCount = 45; // Densidad ideal para flotar
+    const isMobile = window.innerWidth < 768;
+    const useShadows = !isMobile;
+    const particleCount = isMobile ? 22 : 45; // Densidad reducida en móvil
     
     // Colores brillantes espirituales
     const colors = [
@@ -24,7 +26,7 @@ export default function EnergyParticles() {
       "rgba(56, 189, 248, 0.85)",  // Turquesa
     ];
 
-    let mouse = { x: -1000, y: -1000, radius: 130 };
+    let mouse = { x: -1000, y: -1000, radius: isMobile ? 80 : 130 };
 
     class Particle {
       x: number;
@@ -45,9 +47,9 @@ export default function EnergyParticles() {
         
         // Movimiento de deriva flotante normal
         this.speedX = Math.random() * 0.4 - 0.2;
-        this.speedY = -(Math.random() * 0.4 + 0.15); // Lento ascenso
-        this.type = Math.random() > 0.85 ? "currency" : (Math.random() > 0.70 ? "sparkle" : "light");
-        this.size = Math.random() * 4 + 2;
+        this.speedY = -(Math.random() * 0.3 + 0.1); // Lento ascenso
+        this.type = Math.random() > 0.88 ? "currency" : (Math.random() > 0.72 ? "sparkle" : "light");
+        this.size = isMobile ? (Math.random() * 3.2 + 1.5) : (Math.random() * 4 + 2);
         this.alpha = Math.random() * 0.4 + 0.45;
 
         this.color = this.type === "currency" || this.type === "sparkle"
@@ -72,14 +74,16 @@ export default function EnergyParticles() {
           this.alpha = Math.random() * 0.4 + 0.45;
         }
 
-        // Empuje del cursor
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < mouse.radius) {
-          const force = (mouse.radius - distance) / mouse.radius;
-          this.x += (dx / distance) * force * 2.5;
-          this.y += (dy / distance) * force * 2.5;
+        // Empuje del cursor (solo si hay coordenadas válidas)
+        if (mouse.x > -900) {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < mouse.radius) {
+            const force = (mouse.radius - distance) / mouse.radius;
+            this.x += (dx / distance) * force * 2.2;
+            this.y += (dy / distance) * force * 2.2;
+          }
         }
 
         // Latido
@@ -111,8 +115,10 @@ export default function EnergyParticles() {
           ctx.beginPath();
           ctx.arc(this.x, this.y, Math.max(1.0, this.size * 0.35), 0, Math.PI * 2);
           ctx.fillStyle = "#ffffff";
-          ctx.shadowColor = this.color;
-          ctx.shadowBlur = 6;
+          if (useShadows) {
+            ctx.shadowColor = this.color;
+            ctx.shadowBlur = 6;
+          }
           ctx.fill();
         } else if (this.type === "currency") {
           // Moneda dorada o infinito flotante
@@ -128,8 +134,10 @@ export default function EnergyParticles() {
           ctx.fill();
 
           ctx.fillStyle = "#ffffff";
-          ctx.shadowColor = "rgba(251, 191, 36, 0.9)";
-          ctx.shadowBlur = 5;
+          if (useShadows) {
+            ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
+            ctx.shadowBlur = 5;
+          }
           ctx.font = `bold ${this.size * 1.1}px sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
@@ -167,8 +175,10 @@ export default function EnergyParticles() {
           ctx.closePath();
           
           ctx.fillStyle = "#ffffff";
-          ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
-          ctx.shadowBlur = 8;
+          if (useShadows) {
+            ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
+            ctx.shadowBlur = 8;
+          }
           ctx.fill();
         }
         
@@ -204,10 +214,21 @@ export default function EnergyParticles() {
       mouse.y = -1000;
     };
 
+    // Soporte táctil móvil para la repulsión de partículas flotantes
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.touches[0].clientX - rect.left;
+        mouse.y = e.touches[0].clientY - rect.top;
+      }
+    };
+
     const parent = canvas.parentElement;
     if (parent) {
-      parent.addEventListener("mousemove", handleMouseMove);
-      parent.addEventListener("mouseleave", handleMouseLeave);
+      parent.addEventListener("mousemove", handleMouseMove, { passive: true });
+      parent.addEventListener("mouseleave", handleMouseLeave, { passive: true });
+      parent.addEventListener("touchmove", handleTouchMove, { passive: true });
+      parent.addEventListener("touchend", handleMouseLeave, { passive: true });
     }
 
     const animate = () => {
@@ -230,6 +251,8 @@ export default function EnergyParticles() {
       if (parent) {
         parent.removeEventListener("mousemove", handleMouseMove);
         parent.removeEventListener("mouseleave", handleMouseLeave);
+        parent.removeEventListener("touchmove", handleTouchMove);
+        parent.removeEventListener("touchend", handleMouseLeave);
       }
     };
   }, []);

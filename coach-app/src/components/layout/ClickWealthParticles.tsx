@@ -14,6 +14,9 @@ export default function ClickWealthParticles() {
 
     let animationFrameId: number | null = null;
     let explosionParticles: Particle[] = [];
+    const isMobile = window.innerWidth < 768;
+    const useShadows = !isMobile;
+    let lastTouchTime = 0;
     
     class Particle {
       x: number;
@@ -32,12 +35,13 @@ export default function ClickWealthParticles() {
         
         // Dirección radial de explosión
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 3.5 + 2.0; 
+        // Velocidad un poco más baja en móvil para que se vea más controlado
+        const speed = isMobile ? (Math.random() * 2.5 + 1.5) : (Math.random() * 3.5 + 2.0); 
         this.speedX = Math.cos(angle) * speed;
         this.speedY = Math.sin(angle) * speed - 1.2; // Salida inclinada hacia arriba
         
         this.type = Math.random() > 0.4 ? "currency" : "sparkle";
-        this.size = Math.random() * 6 + 4; // Tamaño óptimo (4px a 10px)
+        this.size = isMobile ? (Math.random() * 4 + 3) : (Math.random() * 6 + 4); 
         this.alpha = 1.0;
         this.angle = Math.random() * Math.PI * 2;
         this.symbol = this.type === "currency" 
@@ -50,7 +54,7 @@ export default function ClickWealthParticles() {
         this.y += this.speedY;
         this.speedY += 0.12; // Gravedad
         this.speedX *= 0.97; // Resistencia del aire
-        this.alpha -= 0.016; // Desvanecimiento gradual
+        this.alpha -= isMobile ? 0.024 : 0.016; // Desvanecimiento más rápido en móvil
         this.angle += 0.08; // Rotación al caer
       }
 
@@ -73,8 +77,10 @@ export default function ClickWealthParticles() {
           ctx.fill();
 
           ctx.fillStyle = "#ffffff";
-          ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
-          ctx.shadowBlur = 6;
+          if (useShadows) {
+            ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
+            ctx.shadowBlur = 6;
+          }
           ctx.font = `bold ${this.size * 1.15}px sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
@@ -112,8 +118,10 @@ export default function ClickWealthParticles() {
           ctx.closePath();
           
           ctx.fillStyle = "#ffffff";
-          ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
-          ctx.shadowBlur = 8;
+          if (useShadows) {
+            ctx.shadowColor = "rgba(251, 191, 36, 0.95)";
+            ctx.shadowBlur = 8;
+          }
           ctx.fill();
         }
         
@@ -154,10 +162,14 @@ export default function ClickWealthParticles() {
     };
 
     const handleWindowClick = (e: MouseEvent) => {
+      // Evitar doble disparo en móvil por eventos click simulados tras touch
+      if (Date.now() - lastTouchTime < 500) return;
+
       const clickX = e.clientX;
       const clickY = e.clientY;
       
-      for (let i = 0; i < 10; i++) {
+      const count = isMobile ? 4 : 10;
+      for (let i = 0; i < count; i++) {
         explosionParticles.push(new Particle(clickX, clickY));
       }
 
@@ -167,11 +179,13 @@ export default function ClickWealthParticles() {
     };
 
     const handleWindowTouch = (e: TouchEvent) => {
+      lastTouchTime = Date.now();
       if (e.touches && e.touches.length > 0) {
         const touchX = e.touches[0].clientX;
         const touchY = e.touches[0].clientY;
 
-        for (let i = 0; i < 8; i++) {
+        const count = isMobile ? 4 : 8;
+        for (let i = 0; i < count; i++) {
           explosionParticles.push(new Particle(touchX, touchY));
         }
 
@@ -181,8 +195,8 @@ export default function ClickWealthParticles() {
       }
     };
 
-    window.addEventListener("click", handleWindowClick);
-    window.addEventListener("touchstart", handleWindowTouch);
+    window.addEventListener("click", handleWindowClick, { passive: true });
+    window.addEventListener("touchstart", handleWindowTouch, { passive: true });
 
     return () => {
       if (animationFrameId !== null) {
