@@ -48,23 +48,5 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Si el usuario está autenticado, verificar su nivel de suscripción
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('subscription_tier')
-      .eq('id', user.id)
-      .single()
-
-    const isPro = profile?.subscription_tier === 'pro';
-
-    // Si es un usuario PRO e intenta acceder a /paywall, redirigir a /app
-    if (pathname === '/paywall' && isPro) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/app'
-      return NextResponse.redirect(url)
-    }
-  }
-
   return supabaseResponse
 }

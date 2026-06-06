@@ -27,6 +27,18 @@ export default function PaywallPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+        
+        // Redirigir a la app si el usuario ya es PRO (evitamos consulta pesada en middleware)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('subscription_tier')
+          .eq('id', user.id)
+          .single();
+          
+        if (profile?.subscription_tier === 'pro') {
+          router.push('/app');
+          return;
+        }
       }
       setLoading(false);
     };
