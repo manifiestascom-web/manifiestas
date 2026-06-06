@@ -21,6 +21,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'El área es requerida' }, { status: 400 });
     }
 
+    // 3. Verificar tier de suscripción — solo Pro puede crear retos
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.subscription_tier !== 'pro') {
+      return NextResponse.json({ error: 'Los retos de 30 días con IA son exclusivos del plan Pro.' }, { status: 403 });
+    }
+
     const areaName = {
       dinero: 'Dinero y Abundancia Financiera',
       amor: 'Amor Propio y Relaciones Ideales',

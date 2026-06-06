@@ -21,6 +21,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'El deseo, la emoción y la acción son requeridos' }, { status: 400 });
     }
 
+    // 3. Verificar tier de suscripción y límite diario para free
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single();
+
+    const isPro = profile?.subscription_tier === 'pro';
+
+    if (!isPro) {
+      const today = new Date().toISOString().split('T')[0];
+      const { count, error: countErr } = await supabase
+        .from('manifestation_triangles')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gte('created_at', today);
+
+      if (countErr) throw countErr;
+
+      if (count !== null && count >= 1) {
+        return NextResponse.json({ error: 'Has alcanzado tu límite diario de 1 triángulo. Actualiza a Pro para generar ilimitados.' }, { status: 403 });
+      }
+    }
+
     // 3. Crear el Prompt para Gemini
     const prompt = `Actúa como un coach de reprogramación cuántica y manifestación de alta vibración.
 El usuario ha completado los tres vértices de su Triángulo de Manifestación:

@@ -24,6 +24,7 @@ import {
   IconTriangle,
   IconLoader2
 } from "@tabler/icons-react";
+import EnergyParticles from "@/components/layout/EnergyParticles";
 
 // URLs de Imágenes externas (Cloudflare R2 / CDN) para optimizar recursos y rendimiento en Vercel
 const HERO_IMAGE_URL = "/hero.webp"; // Imagen local de alta calidad para el Hero
@@ -74,7 +75,7 @@ const faqs = [
   },
   {
     question: "¿Es gratis utilizar la aplicación?",
-    answer: "Sí, puedes acceder de forma gratuita a las funciones básicas que incluyen las sesiones guiadas, el diario de gratitud y las afirmaciones del día. También ofrecemos opciones premium para sesiones extendidas y análisis del progreso."
+    answer: "Sí. El plan gratuito incluye 3 mensajes diarios con el coach IA, 1 entrada de gratitud al día, 1 triángulo de manifestación al día, visualizaciones guiadas y 1 meta activa. Los límites se resetean cada día. El plan Pro ($9.99/mes) elimina todos los límites y desbloquea los retos de 30 días con IA."
   }
 ];
 
@@ -195,7 +196,7 @@ export default function LandingPage() {
   const startJackpotSimulation = () => {
     setShowJackpot(true);
     setDisplayJackpotAmount(0);
-    const target = parseInt(jackpotAmount.replace(/,/g, ""), 10) || 10000;
+    const target = parseInt(jackpotAmount.replace(/[,.]/g, ""), 10) || 10000;
     let current = 0;
     const step = Math.ceil(target / 40);
 
@@ -253,9 +254,29 @@ export default function LandingPage() {
         </div>
       </header>
 
+      {/* CINTA DE ABUNDANCIA COLECTIVA */}
+      <div className="relative w-full overflow-hidden bg-gradient-to-r from-slate-950 via-[#100926] to-slate-950 border-b border-yellow-500/20 py-2.5 z-40 select-none">
+        <style>{`
+          @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-marquee-custom {
+            display: flex;
+            width: max-content;
+            animation: marquee 35s linear infinite;
+          }
+        `}</style>
+        <div className="animate-marquee-custom flex gap-8 whitespace-nowrap text-[10px] sm:text-xs font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-250 to-yellow-400 uppercase">
+          <span>💰 TOTAL MANIFESTADO HOY: $1,854,230 USD • 📈 342 DEUDAS SALDADAS • 🕊️ 897 MENTES EN SINTONÍA ALTA • 🔮 COEFICIENTE DE PROSPERIDAD: 99.4% • 💸 FLUJO DE ABUNDANCIA ACTIVADO • 🌟</span>
+          <span>💰 TOTAL MANIFESTADO HOY: $1,854,230 USD • 📈 342 DEUDAS SALDADAS • 🕊️ 897 MENTES EN SINTONÍA ALTA • 🔮 COEFICIENTE DE PROSPERIDAD: 99.4% • 💸 FLUJO DE ABUNDANCIA ACTIVADO • 🌟</span>
+        </div>
+      </div>
+
       {/* HERO SECTION */}
-      <section className="relative max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-28 md:pb-36 z-10">
-        <div className="grid grid-cols-12 gap-6 md:gap-12 items-center">
+      <section className="relative max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-28 md:pb-36 z-10 overflow-hidden">
+        <EnergyParticles />
+        <div className="relative z-10 grid grid-cols-12 gap-6 md:gap-12 items-center">
           
           {/* Columna Izquierda: Mensaje principal */}
           <div className="col-span-12 md:col-span-7 text-left space-y-6 md:space-y-8 flex flex-col items-start">
@@ -266,7 +287,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#534AB7]/8 dark:bg-violet-950/30 border border-[#534AB7]/15 dark:border-violet-800/30 text-[10px] sm:text-xs font-bold text-[#534AB7] dark:text-violet-400 tracking-wide uppercase shadow-sm select-none"
             >
               <IconSparkles size={12} className="animate-pulse" />
-              MENTOR DE REPROGRAMACIÓN SUBCONSCIENTE
+              COACH DE MANIFESTACIÓN CON INTELIGENCIA ARTIFICIAL
             </motion.div>
             
             <motion.h1 
@@ -275,9 +296,9 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-black text-text-primary leading-[1.15] md:leading-tight tracking-tight"
             >
-              Alinea tu frecuencia. <br />
+              Manifiesta dinero, amor y éxito{" "}
               <span className="bg-gradient-to-r from-primary via-accent-purple to-accent-gold bg-clip-text text-transparent">
-                Materializa tu nueva realidad.
+                con tu coach de IA personal.
               </span>
             </motion.h1>
             
@@ -287,7 +308,7 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="text-text-secondary text-lg md:text-xl leading-relaxed max-w-xl"
             >
-              Reprograma tu mente con Inteligencia Artificial, visualizaciones guiadas y hábitos transformadores.
+              Habla con una IA entrenada en manifestación, genera afirmaciones personalizadas y reprograma tu subconsciente con hábitos diarios — todo en una sola app.
             </motion.p>
             
             <motion.div 
@@ -300,38 +321,101 @@ export default function LandingPage() {
                 href="/app" 
                 className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-accent-purple hover:from-primary-dark hover:to-accent-purple text-white font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.03]"
               >
-                Comenzar gratis <IconArrowRight size={20} />
+                Probar gratis — sin tarjeta <IconArrowRight size={20} />
               </Link>
               <a 
                 href="#demo" 
                 className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-bg-primary dark:bg-white/5 border border-border-secondary dark:border-white/15 text-text-primary dark:text-slate-200 font-bold hover:bg-bg-secondary dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 shadow-sm"
               >
-                Probar Demo
+                Ver demo en vivo
               </a>
-              
-              <div className="hidden sm:flex w-full text-xs sm:text-sm text-text-secondary/70 items-center gap-1.5 mt-2 select-none">
-                <span>🛡️</span> Sin tarjeta de crédito  •  Cancela cuando quieras
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+              className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-text-secondary/70 select-none text-left w-full mt-1.5"
+            >
+              <span>🛡️</span> Gratis para siempre  •  Pro desde $9.99/mes  •  Cancela cuando quieras
+            </motion.div>
+
+            {/* Sintonizador de Riqueza Interactivo en el Hero */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.38 }}
+              className="w-full max-w-md p-4 sm:p-5 rounded-3xl bg-white/5 dark:bg-[#150e33]/40 border border-yellow-500/20 dark:border-yellow-500/10 shadow-[0_0_25px_rgba(250,204,21,0.04)] text-left space-y-3 relative overflow-hidden mt-2"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-400/5 rounded-full blur-2xl pointer-events-none"></div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">💵</span>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-yellow-500">Sintonizador de Riqueza Cuántica</h4>
+              </div>
+              <p className="text-[11px] text-text-secondary dark:text-slate-300 leading-relaxed">
+                Siente la vibración de tu meta financiera hoy. Ingresa un monto y alinea tu frecuencia:
+              </p>
+              <div className="flex gap-2 w-full">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary text-xs font-bold">$</span>
+                  <input 
+                    type="text"
+                    value={jackpotAmount}
+                    onChange={(e) => {
+                      const clean = e.target.value.replace(/\D/g, "");
+                      setJackpotAmount(clean ? clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "");
+                    }}
+                    placeholder="10.000"
+                    className="w-full bg-bg-secondary dark:bg-slate-900/60 border border-border-secondary dark:border-white/10 rounded-xl py-2 pl-6 pr-2 text-xs font-bold text-text-primary dark:text-white outline-none focus:border-yellow-400 transition-colors"
+                  />
+                </div>
+                <button
+                  onClick={startJackpotSimulation}
+                  className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-450 hover:to-amber-450 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-yellow-500/15 flex items-center gap-1 active:scale-[0.98] cursor-pointer"
+                >
+                  Alinear Riqueza ⚡
+                </button>
               </div>
             </motion.div>
             
-            {/* Fila de stats (Solo visible en escritorio) */}
+            {/* Fila de stats (Visible en móvil y escritorio) */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="hidden md:grid pt-8 border-t border-border-primary dark:border-white/5 grid-cols-3 gap-6 max-w-md text-left w-full"
+              className="flex flex-col gap-6 pt-6 md:pt-8 border-t border-border-primary dark:border-white/5 max-w-md text-left w-full mt-2"
             >
-              <div>
-                <p className="text-2xl font-black text-text-primary">98%</p>
-                <p className="text-xs text-text-secondary mt-1">Vibración positiva</p>
+              {/* Mini social proof strip */}
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {['💜', '✨', '🌟', '🔮', '💎'].map((emoji, i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent-gold/20 border-2 border-bg-primary dark:border-slate-900 flex items-center justify-center text-sm">{emoji}</div>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-text-primary">2,300+ personas manifestando</p>
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span key={i} className="text-accent-gold text-xs">★</span>
+                    ))}
+                    <span className="text-xs text-text-secondary ml-1">4.9/5 calificación</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-black text-text-primary">24/7</p>
-                <p className="text-xs text-text-secondary mt-1">Disponibilidad</p>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-text-primary">10x</p>
-                <p className="text-xs text-text-secondary mt-1">Enfoque mental</p>
+
+              <div className="grid grid-cols-3 gap-6">
+                <div>
+                  <p className="text-2xl font-black text-text-primary">24/7</p>
+                  <p className="text-xs text-text-secondary mt-1">Coach IA disponible</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-black text-text-primary">30 días</p>
+                  <p className="text-xs text-text-secondary mt-1">Retos personalizados</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-black text-text-primary">$0</p>
+                  <p className="text-xs text-text-secondary mt-1">Para empezar</p>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -637,6 +721,64 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ===== TESTIMONIOS ===== */}
+      <section id="testimonios" className="py-24 border-t border-border-primary dark:border-white/5 relative z-10 overflow-hidden transition-colors">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-accent-gold/5 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-xs font-bold text-primary dark:text-accent-gold uppercase tracking-widest">Ellas Ya Lo Viven</h2>
+            <p className="text-3xl sm:text-4xl font-black text-text-primary dark:text-white tracking-tight">
+              Vidas que se están{" "}
+              <span className="bg-gradient-to-r from-primary to-accent-gold bg-clip-text text-transparent">transformando</span>
+            </p>
+            <p className="text-text-secondary max-w-xl mx-auto">
+              Más de 2,000 mujeres ya están alineando su frecuencia y manifestando sus deseos con Manifiestas AI.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: "Valeria M.", location: "Ciudad de México", avatar: "💜", text: "En menos de 30 días recibí una oferta de trabajo con el salario exacto que había declarado en mis afirmaciones. Esto no es coincidencia.", tag: "Manifestó su trabajo ideal" },
+              { name: "Daniela R.", location: "Bogotá, Colombia", avatar: "✨", text: "El coach de IA entiende exactamente en qué frecuencia estoy. Nunca había tenido un espacio tan personal y sin juicios para hablar de mis sueños.", tag: "Amor propio y claridad" },
+              { name: "Sofía L.", location: "Buenos Aires, Argentina", avatar: "🌟", text: "Empecé la visualización cuántica antes de dormir. En 3 semanas, manifesté el apartamento al precio que pedí. Sigo sin creerlo.", tag: "Manifestó su hogar ideal" },
+              { name: "Camila T.", location: "Lima, Perú", avatar: "🔮", text: "Las afirmaciones personalizadas son otro nivel. No son frases genéricas — el sistema las adapta a mis bloqueos específicos. Realmente me conoce.", tag: "Reprogramación de creencias" },
+              { name: "Andrea P.", location: "Santiago, Chile", avatar: "💎", text: "Hoy tengo 3 fuentes de ingreso que no tenía hace 4 meses. La consistencia con las afirmaciones diarias lo cambió todo.", tag: "Abundancia financiera" },
+              { name: "Isabella F.", location: "Medellín, Colombia", avatar: "🌙", text: "El coach me ayudó a identificar el bloqueo que me saboteaba en el amor. Dos meses después conocí a la persona que buscaba.", tag: "Manifestó su relación ideal" },
+            ].map(({ name, location, avatar, text, tag }) => (
+              <div key={name} className="glass-card p-7 rounded-3xl flex flex-col gap-4 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} className="text-accent-gold text-sm">★</span>
+                  ))}
+                </div>
+                <p className="text-text-secondary dark:text-slate-300 text-sm leading-relaxed flex-1 italic">&ldquo;{text}&rdquo;</p>
+                <span className="self-start px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary dark:text-violet-300 text-[11px] font-semibold">✦ {tag}</span>
+                <div className="flex items-center gap-3 pt-1 border-t border-border-primary dark:border-white/5">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent-gold/20 flex items-center justify-center text-lg shrink-0">{avatar}</div>
+                  <div>
+                    <p className="text-sm font-bold text-text-primary dark:text-white">{name}</p>
+                    <p className="text-[11px] text-text-secondary">{location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 text-center">
+            {[
+              { value: "2,300+", label: "Usuarias activas" },
+              { value: "98%", label: "Satisfacción reportada" },
+              { value: "4.9 / 5", label: "Calificación promedio" },
+            ].map(({ value, label }) => (
+              <div key={label}>
+                <p className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-primary to-accent-gold bg-clip-text text-transparent">{value}</p>
+                <p className="text-sm text-text-secondary mt-1">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CARACTERÍSTICAS PRINCIPALES */}
       <section id="features" className="py-24 border-t border-border-primary dark:border-white/5 bg-bg-primary/50 dark:bg-slate-950/40 relative z-10 transition-colors">
         <div className="max-w-7xl mx-auto px-6 text-center">
@@ -656,7 +798,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             
             {/* Carta 1: AI Coach */}
-            <div className="glass-card p-6 rounded-3xl text-left hover:border-primary/40 transition-all duration-300 group flex flex-col justify-between">
+            <a href="#demo-coach" className="glass-card p-6 rounded-3xl text-left hover:border-primary/40 transition-all duration-300 group flex flex-col justify-between cursor-pointer no-underline">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                   <IconRobot size={24} />
@@ -669,10 +811,10 @@ export default function LandingPage() {
               <div className="pt-6 flex items-center gap-1.5 text-primary dark:text-accent-gold text-xs font-bold">
                 Iniciar diálogo <IconArrowRight size={12} />
               </div>
-            </div>
+            </a>
 
             {/* Carta 2: Triángulo de Manifestación */}
-            <div className="glass-card p-6 rounded-3xl text-left hover:border-accent-purple/40 transition-all duration-300 group flex flex-col justify-between">
+            <a href="#demo-triangulo" className="glass-card p-6 rounded-3xl text-left hover:border-accent-purple/40 transition-all duration-300 group flex flex-col justify-between cursor-pointer no-underline">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-accent-purple/10 border border-accent-purple/20 flex items-center justify-center text-accent-purple mb-6 group-hover:scale-110 transition-transform">
                   <IconTriangle size={24} />
@@ -685,10 +827,10 @@ export default function LandingPage() {
               <div className="pt-6 flex items-center gap-1.5 text-primary dark:text-accent-gold text-xs font-bold">
                 Activar triángulo <IconArrowRight size={12} />
               </div>
-            </div>
+            </a>
 
             {/* Carta 3: Reto de 30 Días */}
-            <div className="glass-card p-6 rounded-3xl text-left hover:border-accent-gold/40 transition-all duration-300 group flex flex-col justify-between">
+            <a href="#precios" className="glass-card p-6 rounded-3xl text-left hover:border-accent-gold/40 transition-all duration-300 group flex flex-col justify-between cursor-pointer no-underline">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-accent-gold/10 border border-accent-gold/20 flex items-center justify-center text-accent-gold mb-6 group-hover:scale-110 transition-transform">
                   <IconTarget size={24} />
@@ -701,10 +843,10 @@ export default function LandingPage() {
               <div className="pt-6 flex items-center gap-1.5 text-primary dark:text-accent-gold text-xs font-bold">
                 Generar reto <IconArrowRight size={12} />
               </div>
-            </div>
+            </a>
 
             {/* Carta 4: Visualización Cuántica */}
-            <div className="glass-card p-6 rounded-3xl text-left hover:border-blue-400/40 transition-all duration-300 group flex flex-col justify-between">
+            <a href="#demo-jackpot" className="glass-card p-6 rounded-3xl text-left hover:border-blue-400/40 transition-all duration-300 group flex flex-col justify-between cursor-pointer no-underline">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
                   <IconEye size={24} />
@@ -717,7 +859,7 @@ export default function LandingPage() {
               <div className="pt-6 flex items-center gap-1.5 text-primary dark:text-accent-gold text-xs font-bold">
                 Iniciar alineación <IconArrowRight size={12} />
               </div>
-            </div>
+            </a>
 
           </div>
         </div>
@@ -775,12 +917,13 @@ export default function LandingPage() {
       </section>
 
       {/* DEMO INTERACTIVA */}
-      <section id="demo" className="py-24 bg-bg-primary dark:bg-gradient-to-b dark:from-[#080414] dark:to-[#0c0620] relative z-10 transition-colors border-t border-border-primary dark:border-white/5">
+      <section id="demo" className="py-24 bg-bg-primary dark:bg-gradient-to-b dark:from-[#080414] dark:to-[#0c0620] relative z-10 transition-colors border-t border-border-primary dark:border-white/5 overflow-hidden">
+        <EnergyParticles />
         
         {/* Glow de la sección */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-purple/3 dark:bg-accent-purple/5 rounded-full blur-[150px] pointer-events-none"></div>
         
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
             <p className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight">Siente el poder de Manifiestas AI</p>
             <p className="text-text-secondary">Prueba nuestras dos herramientas principales directamente en la landing page.</p>
@@ -789,7 +932,7 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             
             {/* WIDGET 1: SIMULADOR INTERACTIVO DEL TRIÁNGULO DE MANIFESTACIÓN */}
-            <div className="lg:col-span-6 space-y-6">
+            <div id="demo-triangulo" className="lg:col-span-6 space-y-6">
               <div className="glass-card rounded-3xl p-6 md:p-8 space-y-6 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[430px]">
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent-purple/5 dark:bg-accent-purple/10 rounded-full blur-2xl pointer-events-none"></div>
                 
@@ -1099,7 +1242,7 @@ export default function LandingPage() {
             </div>
             
             {/* WIDGET 2: CHAT CON EL MENTOR SIMULADO */}
-            <div className="lg:col-span-6 space-y-6">
+            <div id="demo-coach" className="lg:col-span-6 space-y-6">
               <div className="glass-card rounded-3xl p-6 md:p-8 space-y-6 shadow-xl relative flex flex-col h-[415px]">
                 <h3 className="text-lg font-bold text-text-primary flex items-center gap-2 shrink-0">
                   <span className="text-primary">🤖</span> Prueba el Coach Cognitivo
@@ -1162,60 +1305,10 @@ export default function LandingPage() {
           </div>
 
           {/* WIDGET 3: PREVIO DEL JACKPOT DE ABUNDANCIA */}
-          <div className="mt-12 text-center">
+          <div id="demo-jackpot" className="mt-12 text-center">
             <div className="glass-card rounded-3xl p-8 max-w-4xl mx-auto relative overflow-hidden">
               
               {/* Estallido de partículas dorado (Siempre usa overlay oscuro por ser efecto teatral) */}
-              <AnimatePresence>
-                {showJackpot && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-slate-950/95 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center"
-                  >
-                    {/* Estallido central */}
-                    <motion.div
-                      initial={{ scale: 0.2, opacity: 1 }}
-                      animate={{ scale: 3, opacity: 0 }}
-                      transition={{ duration: 1.2, ease: "easeOut" }}
-                      className="absolute w-40 h-40 rounded-full bg-yellow-400 blur-xl"
-                    />
-
-                    {/* Partículas Cayendo */}
-                    {[...Array(15)].map((_, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ y: -80, x: Math.random() * 400 - 200, opacity: 0 }}
-                        animate={{ y: 250, x: (Math.random() * 400 - 200), opacity: [0, 1, 1, 0] }}
-                        transition={{ duration: 1.5 + Math.random() * 1.5, ease: "linear", repeat: Infinity }}
-                        className="absolute text-yellow-400 text-lg"
-                      >
-                        ✨
-                      </motion.div>
-                    ))}
-
-                    <div className="relative text-center space-y-4 px-4">
-                      <div className="w-14 h-14 bg-yellow-400/20 border border-yellow-400/50 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(250,204,21,0.3)] animate-bounce">
-                        <IconCheck size={28} className="text-yellow-400" />
-                      </div>
-                      <h4 className="text-yellow-400 text-sm font-bold tracking-widest uppercase">Frecuencia Financiera Sintonizada</h4>
-                      <div className="text-5xl font-black text-white">
-                        <span className="text-yellow-400">$</span>{displayJackpotAmount.toLocaleString()}
-                      </div>
-                      <p className="text-slate-300 text-xs max-w-sm mx-auto leading-relaxed">
-                        ¡Simulación completada! En la aplicación real, esta pantalla estimula tu mente de forma visual y auditiva tras sesiones completas.
-                      </p>
-                      <button
-                        onClick={() => setShowJackpot(false)}
-                        className="px-5 py-2 bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded-full text-xs uppercase font-bold tracking-wider transition-colors"
-                      >
-                        Cerrar Simulación
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
               <div className="grid md:grid-cols-12 gap-8 items-center">
                 <div className="md:col-span-7 text-left space-y-4">
@@ -1231,8 +1324,11 @@ export default function LandingPage() {
                     <input 
                       type="text" 
                       value={jackpotAmount}
-                      onChange={(e) => setJackpotAmount(e.target.value)}
-                      placeholder="10000"
+                      onChange={(e) => {
+                        const clean = e.target.value.replace(/\D/g, "");
+                        setJackpotAmount(clean ? clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "");
+                      }}
+                      placeholder="10.000"
                       className="px-4 py-2.5 bg-bg-secondary dark:bg-slate-950/70 border border-border-secondary dark:border-white/10 rounded-xl text-sm font-bold text-text-primary dark:text-white text-center focus:border-primary dark:focus:border-accent-gold focus:outline-none w-32"
                     />
                     <button
@@ -1261,7 +1357,7 @@ export default function LandingPage() {
                       </div>
                       <div className="text-[10px] text-yellow-400 font-bold uppercase tracking-widest">Sintonización Activa</div>
                       <div className="text-2xl font-black text-white mt-1">
-                        ${parseInt(jackpotAmount.replace(/,/g, "") || "10000").toLocaleString()}
+                        ${parseInt(jackpotAmount.replace(/[,.]/g, "") || "10000").toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                       </div>
                       <p className="text-[10px] text-slate-300 mt-1 max-w-[200px]">El universo refleja tu gratitud.</p>
                     </div>
@@ -1326,64 +1422,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== TESTIMONIOS ===== */}
-      <section id="testimonios" className="py-24 border-t border-border-primary dark:border-white/5 relative z-10 overflow-hidden transition-colors">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-accent-gold/5 pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-6 relative">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-xs font-bold text-primary dark:text-accent-gold uppercase tracking-widest">Ellas Ya Lo Viven</h2>
-            <p className="text-3xl sm:text-4xl font-black text-text-primary dark:text-white tracking-tight">
-              Vidas que se están{" "}
-              <span className="bg-gradient-to-r from-primary to-accent-gold bg-clip-text text-transparent">transformando</span>
-            </p>
-            <p className="text-text-secondary max-w-xl mx-auto">
-              Más de 2,000 mujeres ya están alineando su frecuencia y manifestando sus deseos con Manifiestas AI.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { name: "Valeria M.", location: "Ciudad de México", avatar: "💜", text: "En menos de 30 días recibí una oferta de trabajo con el salario exacto que había declarado en mis afirmaciones. Esto no es coincidencia.", tag: "Manifestó su trabajo ideal" },
-              { name: "Daniela R.", location: "Bogotá, Colombia", avatar: "✨", text: "El coach de IA entiende exactamente en qué frecuencia estoy. Nunca había tenido un espacio tan personal y sin juicios para hablar de mis sueños.", tag: "Amor propio y claridad" },
-              { name: "Sofía L.", location: "Buenos Aires, Argentina", avatar: "🌟", text: "Empecé la visualización cuántica antes de dormir. En 3 semanas, manifesté el apartamento al precio que pedí. Sigo sin creerlo.", tag: "Manifestó su hogar ideal" },
-              { name: "Camila T.", location: "Lima, Perú", avatar: "🔮", text: "Las afirmaciones personalizadas son otro nivel. No son frases genéricas — el sistema las adapta a mis bloqueos específicos. Realmente me conoce.", tag: "Reprogramación de creencias" },
-              { name: "Andrea P.", location: "Santiago, Chile", avatar: "💎", text: "Hoy tengo 3 fuentes de ingreso que no tenía hace 4 meses. La consistencia con las afirmaciones diarias lo cambió todo.", tag: "Abundancia financiera" },
-              { name: "Isabella F.", location: "Medellín, Colombia", avatar: "🌙", text: "El coach me ayudó a identificar el bloqueo que me saboteaba en el amor. Dos meses después conocí a la persona que buscaba.", tag: "Manifestó su relación ideal" },
-            ].map(({ name, location, avatar, text, tag }) => (
-              <div key={name} className="glass-card p-7 rounded-3xl flex flex-col gap-4 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300">
-                <div className="flex gap-0.5">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className="text-accent-gold text-sm">★</span>
-                  ))}
-                </div>
-                <p className="text-text-secondary dark:text-slate-300 text-sm leading-relaxed flex-1 italic">&ldquo;{text}&rdquo;</p>
-                <span className="self-start px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary dark:text-violet-300 text-[11px] font-semibold">✦ {tag}</span>
-                <div className="flex items-center gap-3 pt-1 border-t border-border-primary dark:border-white/5">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent-gold/20 flex items-center justify-center text-lg shrink-0">{avatar}</div>
-                  <div>
-                    <p className="text-sm font-bold text-text-primary dark:text-white">{name}</p>
-                    <p className="text-[11px] text-text-secondary">{location}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 text-center">
-            {[
-              { value: "2,300+", label: "Usuarias activas" },
-              { value: "98%", label: "Satisfacción reportada" },
-              { value: "4.9 / 5", label: "Calificación promedio" },
-            ].map(({ value, label }) => (
-              <div key={label}>
-                <p className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-primary to-accent-gold bg-clip-text text-transparent">{value}</p>
-                <p className="text-sm text-text-secondary mt-1">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ===== PRECIOS ===== */}
       <section id="precios" className="py-24 border-t border-border-primary dark:border-white/5 bg-bg-primary/50 dark:bg-slate-950/30 relative z-10 transition-colors">
         <div className="max-w-5xl mx-auto px-6">
@@ -1402,7 +1440,7 @@ export default function LandingPage() {
                 <p className="text-text-secondary text-sm mt-1">Sin tarjeta de crédito</p>
               </div>
               <ul className="space-y-3 flex-1">
-                {["Coach de IA — 5 mensajes/día", "Diario de gratitud (hasta 3 entradas)", "Triángulo de Manifestación básico", "Visualizaciones guiadas", "Seguimiento de 1 meta activa"].map((item) => (
+                {["Coach de IA — 3 mensajes/día", "Diario de gratitud — 1 entrada/día", "Triángulo de Manifestación — 1/día", "Visualizaciones y respiración guiada", "Seguimiento de 1 meta activa"].map((item) => (
                   <li key={item} className="flex items-start gap-2.5 text-sm text-text-secondary">
                     <span className="text-green-500 mt-0.5 shrink-0">✓</span>{item}
                   </li>
@@ -1428,7 +1466,7 @@ export default function LandingPage() {
                   <p className="text-text-secondary text-sm mt-1">O $79.99/año — ahorra 33%</p>
                 </div>
                 <ul className="space-y-3 flex-1">
-                  {["Coach de IA — mensajes ilimitados", "Triángulos de Manifestación ilimitados", "Retos de 30 Días con IA personalizados", "Diario de gratitud ilimitado", "Metas de Acción ilimitadas con avance por días", "Decretos de abundancia guardados (Mis Decretos 🔺)", "Visualizaciones cuánticas ilimitadas", "Gestión de facturación con Stripe"].map((item) => (
+                  {["Coach de IA — mensajes ilimitados ∞", "Triángulos de Manifestación ilimitados ∞", "Retos de 30 Días personalizados con IA", "Diario de gratitud ilimitado ∞", "Metas ilimitadas con avance por días", "Decretos de abundancia guardados (Mis Decretos 🔺)", "Visualizaciones cuánticas ilimitadas", "Gestión de facturación con Stripe"].map((item) => (
                     <li key={item} className="flex items-start gap-2.5 text-sm text-text-secondary dark:text-slate-300">
                       <span className="text-accent-gold mt-0.5 shrink-0">✦</span>{item}
                     </li>
@@ -1567,6 +1605,58 @@ export default function LandingPage() {
                 className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-primary to-accent-purple hover:opacity-90 text-[10px] font-bold text-white transition-all uppercase tracking-wider shadow-md cursor-pointer"
               >
                 Aceptar
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* SINTONIZADOR / SIMULADOR CEREBRAL JACKPOT GLOBAL */}
+      <AnimatePresence>
+        {showJackpot && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-950/98 backdrop-blur-md z-[100] flex flex-col items-center justify-center"
+          >
+            {/* Estallido central */}
+            <motion.div
+              initial={{ scale: 0.2, opacity: 1 }}
+              animate={{ scale: 3, opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="absolute w-40 h-40 rounded-full bg-yellow-400 blur-xl"
+            />
+
+            {/* Partículas Cayendo */}
+            {[...Array(15)].map((_, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ y: -80, x: Math.random() * 400 - 200, opacity: 0 }}
+                animate={{ y: 250, x: (Math.random() * 400 - 200), opacity: [0, 1, 1, 0] }}
+                transition={{ duration: 1.5 + Math.random() * 1.5, ease: "linear", repeat: Infinity }}
+                className="absolute text-yellow-400 text-lg"
+              >
+                ✨
+              </motion.div>
+            ))}
+
+            <div className="relative text-center space-y-4 px-4">
+              <div className="w-14 h-14 bg-yellow-400/20 border border-yellow-400/50 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(250,204,21,0.3)] animate-bounce">
+                <IconCheck size={28} className="text-yellow-400" />
+              </div>
+              <h4 className="text-yellow-400 text-sm font-bold tracking-widest uppercase">Frecuencia Financiera Sintonizada</h4>
+              <div className="text-5xl font-black text-white">
+                <span className="text-yellow-400">$</span>{displayJackpotAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              </div>
+              <p className="text-slate-300 text-xs max-w-sm mx-auto leading-relaxed">
+                ¡Simulación completada! En la aplicación real, esta pantalla estimula tu mente de forma visual y auditiva tras sesiones completas.
+              </p>
+              <button
+                onClick={() => setShowJackpot(false)}
+                className="px-5 py-2 bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded-full text-xs uppercase font-bold tracking-wider transition-colors"
+              >
+                Cerrar Simulación
               </button>
             </div>
           </motion.div>

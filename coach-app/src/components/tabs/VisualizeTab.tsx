@@ -21,6 +21,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 import { createClient } from '@/utils/supabase/client';
+import Link from 'next/link';
 
 const areas = [
   { id: 'dinero', icon: '💰', label: 'Abundancia' },
@@ -60,11 +61,38 @@ export default function VisualizeTab() {
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
 
+  // Tier y límite diario para triángulo IA
+  const [isPro, setIsPro] = useState(false);
+  const [dailyTriangleCount, setDailyTriangleCount] = useState(0);
+  const [showTriangleUpgradeModal, setShowTriangleUpgradeModal] = useState(false);
+  const FREE_DAILY_TRIANGLE_LIMIT = 1;
+
   useEffect(() => {
     const fetchUserAndTriangles = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+
+        // Cargar perfil para ver tier
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('subscription_tier')
+          .eq('id', user.id)
+          .single();
+
+        const userIsPro = profile?.subscription_tier === 'pro';
+        setIsPro(userIsPro);
+
+        // Contar triángulos generados hoy (solo si es free)
+        if (!userIsPro) {
+          const today = new Date().toISOString().split('T')[0];
+          const { count } = await supabase
+            .from('manifestation_triangles')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .gte('created_at', today);
+          setDailyTriangleCount(count ?? 0);
+        }
         
         // Fetch saved triangles
         const { data, error } = await supabase
@@ -159,7 +187,7 @@ export default function VisualizeTab() {
     setSelectedArea('guided_breathing');
     setMode('guided_session');
     setGuidedStep(0);
-    setTimer(18); // 18 segundos para la fase de respiración (6s inhalar, 6s retener, 6s exhalar)
+    setTimer(54); // 54 segundos (3 ciclos de 18s: 6s Inhalar, 6s Retener, 6s Exhalar)
   };
 
   const handleSelectGuidedArea = (areaId: string) => {
@@ -203,8 +231,8 @@ export default function VisualizeTab() {
 
   // Animación del número subiendo rápido en el reward (solo para dinero)
   useEffect(() => {
-    if (mode === 'reward' && selectedArea === 'dinero') {
-      const targetAmount = parseInt(amount.replace(/,/g, ''), 10) || 5000;
+    if (mode === 'reward' && selectedArea === 'dinero' && amount) {
+      const targetAmount = parseInt(amount.replace(/[,.]/g, ''), 10) || 5000;
       let current = 0;
       const step = Math.ceil(targetAmount / 50) || 100; // 50 pasos
       
@@ -223,11 +251,34 @@ export default function VisualizeTab() {
   }, [mode, amount, selectedArea]);
 
   const getBreathingPhase = () => {
-    if (timer > 12) return 'inhale';
-    if (timer > 6) return 'hold';
+    if (mode !== 'guided_session' || guidedStep !== 0) {
+      if (timer > 12) return 'inhale';
+      if (timer > 6) return 'hold';
+      return 'exhale';
+    }
+    const elapsedInCycle = (54 - timer) % 18;
+    const secondsRemainingInCycle = 18 - elapsedInCycle;
+    if (secondsRemainingInCycle > 12) return 'inhale';
+    if (secondsRemainingInCycle > 6) return 'hold';
     return 'exhale';
   };
   const phase = getBreathingPhase();
+
+  const getPhaseTimer = () => {
+    if (mode !== 'guided_session' || guidedStep !== 0) return timer;
+    const elapsedInCycle = (54 - timer) % 18;
+    const secondsRemainingInCycle = 18 - elapsedInCycle;
+    if (secondsRemainingInCycle > 12) return secondsRemainingInCycle - 12;
+    if (secondsRemainingInCycle > 6) return secondsRemainingInCycle - 6;
+    return secondsRemainingInCycle;
+  };
+  const phaseTimer = getPhaseTimer();
+
+  const getBreathingCycle = () => {
+    if (mode !== 'guided_session' || guidedStep !== 0) return 1;
+    return Math.min(3, Math.floor((54 - timer) / 18) + 1);
+  };
+  const currentCycle = getBreathingCycle();
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-bg-primary">
@@ -299,6 +350,11 @@ export default function VisualizeTab() {
 
                 <button 
                   onClick={() => {
+                    // Verificar límite diario para free
+                    if (!isPro && dailyTriangleCount >= FREE_DAILY_TRIANGLE_LIMIT) {
+                      setShowTriangleUpgradeModal(true);
+                      return;
+                    }
                     setMode('triangle_session');
                     setTriangleStep(1);
                     setDesire('');
@@ -459,10 +515,13 @@ export default function VisualizeTab() {
                     <IconCurrencyDollar size={24} />
                   </div>
                   <input 
-                    type="number" 
+                    type="text" 
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="5000"
+                    onChange={(e) => {
+                      const clean = e.target.value.replace(/\D/g, "");
+                      setAmount(clean ? clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "");
+                    }}
+                    placeholder="5.000"
                     className="w-full bg-bg-secondary border-2 border-primary/30 rounded-2xl py-4 pl-12 pr-4 text-2xl font-bold text-center text-primary outline-none focus:border-primary transition-colors shadow-inner"
                     autoFocus
                   />
@@ -559,9 +618,9 @@ export default function VisualizeTab() {
             {guidedStep === 0 && (
               <>
                 <h2 className="text-xl font-bold mb-12 relative z-10 leading-snug">
-                  {timer > 12 && <>Inhala profundamente...<br/><span className="text-indigo-300 text-xs sm:text-sm font-normal">Siente el aire llenándote de vida</span></>}
-                  {timer <= 12 && timer > 6 && <>Retén el aire...<br/><span className="text-pink-300 text-xs sm:text-sm font-normal">Siente la presencia y tu propia energía</span></>}
-                  {timer <= 6 && <>Exhala despacio...<br/><span className="text-blue-300 text-xs sm:text-sm font-normal">Suelta toda la tensión del día</span></>}
+                  {phase === 'inhale' && <>Inhala profundamente...<br/><span className="text-indigo-300 text-xs sm:text-sm font-normal">Siente el aire llenándote de vida</span></>}
+                  {phase === 'hold' && <>Retén el aire...<br/><span className="text-pink-300 text-xs sm:text-sm font-normal">Siente la presencia y tu propia energía</span></>}
+                  {phase === 'exhale' && <>Exhala despacio...<br/><span className="text-blue-300 text-xs sm:text-sm font-normal">Suelta toda la tensión del día</span></>}
                 </h2>
 
                 <motion.div 
@@ -581,9 +640,11 @@ export default function VisualizeTab() {
                 </motion.div>
                 
                 <div className="text-3xl font-light tracking-widest relative z-10 opacity-80 mb-4">
-                  00:{timer < 10 ? `0${timer}` : timer}
+                  00:0{phaseTimer}
                 </div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-white/50">Fase 1: Conexión Inicial</span>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-white/50">
+                  Ciclo {currentCycle} de 3 • Conexión Inicial
+                </span>
               </>
             )}
 
@@ -772,10 +833,29 @@ export default function VisualizeTab() {
               </h2>
               
               {selectedArea === 'dinero' ? (
-                <div className="text-6xl font-bold text-white mb-6 tracking-tighter drop-shadow-lg flex items-center justify-center">
-                  <span className="text-yellow-400 mr-1">$</span>
-                  {displayAmount.toLocaleString()}
-                </div>
+                amount ? (
+                  <div className="text-6xl font-bold text-white mb-6 tracking-tighter drop-shadow-lg flex items-center justify-center">
+                    <span className="text-yellow-400 mr-1">$</span>
+                    {displayAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  </div>
+                ) : (
+                  <div className="text-center mb-6">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: [1, 1.05, 1], opacity: 1 }}
+                      transition={{ 
+                        scale: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+                        opacity: { duration: 0.5 }
+                      }}
+                      className="text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 drop-shadow-[0_0_30px_rgba(250,204,21,0.5)] leading-none select-none"
+                    >
+                      ∞
+                    </motion.div>
+                    <div className="text-[13px] font-bold text-yellow-400 uppercase tracking-widest mt-2 animate-pulse">
+                      Abundancia Infinita
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="text-sm sm:text-base font-bold text-white mb-6 max-w-[280px] drop-shadow-md px-2 italic">
                   "{selectedArea === 'guided_breathing' ? 'Respiración Consciente' : intention || 'Alineación Completada'}"
@@ -814,7 +894,7 @@ export default function VisualizeTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="p-4 sm:p-6 h-full flex flex-col items-center justify-center bg-slate-900 text-white relative overflow-y-auto no-scrollbar pb-24 text-center"
+            className="p-4 sm:p-6 h-full flex flex-col items-center justify-start bg-slate-900 text-white relative overflow-y-auto no-scrollbar pb-24 text-center pt-16 sm:pt-20"
           >
             {/* Botón de cerrar */}
             <button 
@@ -1157,6 +1237,7 @@ export default function VisualizeTab() {
 
                         // Ir al paso de resultado (ya se marca como guardado exitosamente)
                         setSavedSuccess(true);
+                        setDailyTriangleCount(prev => prev + 1);
                         setTriangleStep(4);
                       } catch (err: any) {
                         alert(err.message || 'Error al conectar con la IA de Manifestación.');
@@ -1305,6 +1386,43 @@ export default function VisualizeTab() {
               </motion.div>
             )}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL DE UPGRADE PARA TRIÁNGULO IA */}
+      <AnimatePresence>
+        {showTriangleUpgradeModal && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-bg-primary border border-border-secondary w-full max-w-[380px] rounded-3xl p-6 shadow-2xl relative text-center flex flex-col items-center"
+            >
+              <button 
+                onClick={() => setShowTriangleUpgradeModal(false)}
+                className="absolute top-4 right-4 p-1 text-text-secondary hover:text-text-primary rounded-full hover:bg-bg-secondary transition-all"
+              >
+                <IconX size={20} />
+              </button>
+
+              <div className="w-12 h-12 bg-accent-gold/20 text-accent-gold rounded-full flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(250,204,21,0.2)] animate-bounce mt-2">
+                <IconSparkles size={24} stroke={2.5} />
+              </div>
+
+              <h3 className="text-base font-bold text-text-primary mb-1.5">Límite diario alcanzado</h3>
+              <p className="text-text-secondary text-xs mb-6 max-w-[260px] leading-relaxed">
+                En el plan gratuito puedes generar 1 Triángulo de Manifestación con IA al día. Vuelve mañana o actualiza a Pro para creaciones ilimitadas.
+              </p>
+
+              <Link 
+                href="/paywall"
+                className="w-full py-3.5 rounded-xl border-none text-[14px] font-bold tracking-wide transition-all bg-primary hover:bg-primary-dark text-white flex justify-center items-center gap-1.5 shadow-lg shadow-primary/10 active:scale-[0.98] mb-2 uppercase"
+              >
+                Obtener Plan Pro <IconArrowUpRight size={16} />
+              </Link>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

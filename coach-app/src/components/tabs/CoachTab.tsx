@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useChat } from '@ai-sdk/react';
 import { TextStreamChatTransport } from 'ai';
 import { IconSend, IconLoader2, IconSparkles, IconArrowUpRight } from '@tabler/icons-react';
+import UsageBadge from '@/components/layout/UsageBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 
@@ -34,7 +35,10 @@ export default function CoachTab() {
   const [loading, setLoading] = useState(true);
   const [isPro, setIsPro] = useState(false);
   const [input, setInput] = useState('');
+  const [dailyMessageCount, setDailyMessageCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const FREE_DAILY_LIMIT = 3;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,7 +72,20 @@ export default function CoachTab() {
           .single();
           
         if (profile) {
-          setIsPro(profile.subscription_tier === 'pro');
+          const userIsPro = profile.subscription_tier === 'pro';
+          setIsPro(userIsPro);
+
+          // Contar mensajes enviados hoy para el límite diario (solo si es free)
+          if (!userIsPro) {
+            const today = new Date().toISOString().split('T')[0];
+            const { count } = await supabase
+              .from('chat_messages')
+              .select('*', { count: 'exact', head: true })
+              .eq('user_id', user.id)
+              .eq('sender', 'user')
+              .gte('created_at', today);
+            setDailyMessageCount(count ?? 0);
+          }
         }
 
         // Cargar mensajes de la base de datos
@@ -98,9 +115,8 @@ export default function CoachTab() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Contar cuántos mensajes ha enviado el usuario
-  const userMessagesCount = messages.filter(m => m.role === 'user').length;
-  const isLimitReached = userMessagesCount >= 5 && !isPro;
+  // Límite diario: usar el conteo del día actual
+  const isLimitReached = dailyMessageCount >= FREE_DAILY_LIMIT && !isPro;
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,6 +128,7 @@ export default function CoachTab() {
         text: trimmedInput,
       });
       setInput('');
+      setDailyMessageCount(prev => prev + 1);
     } catch (err) {
       console.error("Error al enviar mensaje:", err);
     }
@@ -140,6 +157,12 @@ export default function CoachTab() {
 
   return (
     <div className="flex flex-col h-full absolute inset-0 p-4 sm:p-6 pb-24 bg-bg-primary">
+      {/* Badge de uso diario */}
+      {!isPro && (
+        <div className="flex justify-end mb-2">
+          <UsageBadge used={dailyMessageCount} limit={FREE_DAILY_LIMIT} label="mensajes hoy" isPro={isPro} />
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto pr-2 no-scrollbar flex flex-col gap-4 pb-4">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
@@ -218,7 +241,7 @@ export default function CoachTab() {
           </div>
           <h4 className="text-sm font-bold text-text-primary mb-1">Límite diario de coaching alcanzado</h4>
           <p className="text-[12px] text-text-secondary mb-4 max-w-[285px] leading-relaxed">
-            Has enviado tus 5 mensajes diarios permitidos. ¡Actualiza a Pro para conversar de manera ilimitada con tu mentor espiritual!
+            Has usado tus {FREE_DAILY_LIMIT} mensajes del día. Vuelve mañana o actualiza a Pro para conversar de manera ilimitada con tu mentor espiritual.
           </p>
           <Link 
             href="/paywall"

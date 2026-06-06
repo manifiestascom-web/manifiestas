@@ -114,16 +114,17 @@ export default function PaywallPage() {
               </span>
             </h1>
             <p className="text-text-secondary text-sm leading-relaxed max-w-sm">
-              Desbloquea el poder completo de tu mente y el universo. Suscríbete para empezar a usar la aplicación.
+              Elimina todos los límites diarios y desbloquea el poder completo de tu mente y el universo.
             </p>
           </div>
 
           <div className="space-y-4">
             {[
-              { title: "Coach de IA Ilimitado", desc: "Habla sin restricciones de mensajes diarios." },
-              { title: "Afirmaciones Personalizadas con IA", desc: "Decretos adaptados exactamente a tu vibración." },
-              { title: "Visualización Cuántica Infinita", desc: "Usa el simulador financiero y de metas sin límites." },
-              { title: "Diario de Gratitud Avanzado", desc: "Registra tus bendiciones y mantén un historial completo." }
+              { title: "Coach de IA Ilimitado", desc: "Sin límite de 3 mensajes diarios. Habla cuando quieras." },
+              { title: "Retos de 30 Días con IA", desc: "Crea planes de reprogramación mental personalizados." },
+              { title: "Triángulos de Manifestación Ilimitados", desc: "Sin límite de 1 por día. Genera todos los que necesites." },
+              { title: "Diario de Gratitud Sin Límites", desc: "Escribe tantas entradas como quieras cada día." },
+              { title: "Metas Ilimitadas", desc: "Sigue múltiples metas de manifestación a la vez." }
             ].map((benefit, i) => (
               <div key={i} className="flex gap-3">
                 <div className="w-5 h-5 rounded-full bg-accent-gold/20 text-accent-gold flex items-center justify-center shrink-0 mt-0.5">

@@ -35,8 +35,8 @@ export async function POST(request: Request) {
 
       if (countErr) throw countErr;
 
-      if (count && count >= 5) {
-        return new NextResponse('Límite de mensajes diarios alcanzado', { status: 403 });
+      if (count !== null && count >= 3) {
+        return new NextResponse('Límite de mensajes diarios alcanzado (3/3). Actualiza a Pro para mensajes ilimitados.', { status: 403 });
       }
     }
 

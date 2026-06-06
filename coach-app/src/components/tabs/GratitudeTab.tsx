@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconLoader2, IconTrash, IconX, IconSparkles, IconArrowUpRight } from '@tabler/icons-react';
+import UsageBadge from '@/components/layout/UsageBadge';
 import { createClient } from '@/utils/supabase/client';
 
 type GratitudeEntry = {
@@ -21,6 +22,9 @@ export default function GratitudeTab() {
   const [saving, setSaving] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [dailyEntryCount, setDailyEntryCount] = useState(0);
+
+  const FREE_DAILY_LIMIT = 1;
 
   useEffect(() => {
     const fetchUserAndEntries = async () => {
@@ -36,7 +40,19 @@ export default function GratitudeTab() {
           .single();
           
         if (profile) {
-          setIsPro(profile.subscription_tier === 'pro');
+          const userIsPro = profile.subscription_tier === 'pro';
+          setIsPro(userIsPro);
+
+          // Contar entradas de hoy para límite diario (solo si es free)
+          if (!userIsPro) {
+            const today = new Date().toISOString().split('T')[0];
+            const { count } = await supabase
+              .from('gratitude_entries')
+              .select('*', { count: 'exact', head: true })
+              .eq('user_id', user.id)
+              .gte('created_at', today);
+            setDailyEntryCount(count ?? 0);
+          }
         }
 
         // Cargar registros
@@ -58,8 +74,8 @@ export default function GratitudeTab() {
   const handleAdd = async () => {
     if (!text.trim() || !user) return;
 
-    // Si ya tiene 3 registros y no es PRO, bloquear con paywall
-    if (entries.length >= 3 && !isPro) {
+    // Si ya usó su entrada diaria y no es PRO, bloquear con paywall
+    if (dailyEntryCount >= FREE_DAILY_LIMIT && !isPro) {
       setShowUpgradeModal(true);
       return;
     }
@@ -82,6 +98,7 @@ export default function GratitudeTab() {
       if (data && data.length > 0) {
         setEntries([data[0], ...entries]);
         setText('');
+        setDailyEntryCount(prev => prev + 1);
       }
     } catch (err) {
       console.error("Error al guardar en el diario:", err);
@@ -130,7 +147,12 @@ export default function GratitudeTab() {
         </div>
       ) : (
         <>
-          <div className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3">¿Por qué estás agradecid@ hoy?</div>
+          <div className="flex justify-between items-center mb-3">
+            <div className="text-xs font-semibold text-text-secondary uppercase tracking-wider">¿Por qué estás agradecid@ hoy?</div>
+            {!isPro && (
+              <UsageBadge used={dailyEntryCount} limit={FREE_DAILY_LIMIT} label="entrada hoy" isPro={isPro} />
+            )}
+          </div>
           
           <textarea
             value={text}
@@ -213,9 +235,9 @@ export default function GratitudeTab() {
                 <IconSparkles size={24} stroke={2.5} />
               </div>
 
-              <h3 className="text-base font-bold text-text-primary mb-1.5">Límite de diario alcanzado</h3>
+              <h3 className="text-base font-bold text-text-primary mb-1.5">Límite diario alcanzado</h3>
               <p className="text-text-secondary text-xs mb-6 max-w-[260px] leading-relaxed">
-                En el plan gratuito solo puedes registrar hasta 3 entradas en tu diario de gratitud. Actualiza a Pro para escribir de manera ilimitada.
+                En el plan gratuito puedes registrar 1 entrada al día en tu diario de gratitud. Vuelve mañana o actualiza a Pro para escribir de manera ilimitada.
               </p>
 
               <Link 
