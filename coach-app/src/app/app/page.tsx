@@ -42,8 +42,8 @@ export default function AppHome() {
   };
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300 flex flex-col items-center justify-center sm:py-8 sm:px-4">
-      <div className="w-full max-w-[680px] h-screen sm:h-[780px] bg-bg-primary sm:border border-border-secondary sm:rounded-3xl sm:shadow-2xl overflow-hidden flex flex-col relative border-border-primary/80 transition-colors duration-300">
+    <div className="fixed inset-0 flex flex-col overflow-hidden bg-background transition-colors duration-300 sm:relative sm:min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 sm:px-4">
+      <div className="w-full h-full max-w-[680px] sm:h-[780px] bg-bg-primary sm:border border-border-secondary sm:rounded-3xl sm:shadow-2xl overflow-hidden flex flex-col relative border-border-primary/80 transition-colors duration-300">
         <Header />
         
         {/* Contenedor principal del contenido que se anima */}
