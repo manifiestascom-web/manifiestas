@@ -72,36 +72,28 @@ export default function VisualizeTab() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+        const today = new Date().toISOString().split('T')[0];
 
-        // Cargar perfil para ver tier
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('id', user.id)
-          .single();
+        // Cargar perfil, triángulos guardados y conteo en paralelo
+        const [profileResult, trianglesResult, countResult] = await Promise.all([
+          supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
+          supabase.from('manifestation_triangles').select('*').order('created_at', { ascending: false }),
+          supabase.from('manifestation_triangles').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', today)
+        ]);
+
+        const profile = profileResult.data;
+        const trianglesData = trianglesResult.data;
+        const trianglesError = trianglesResult.error;
+        const dailyCount = countResult.count ?? 0;
 
         const userIsPro = profile?.subscription_tier === 'pro';
         setIsPro(userIsPro);
-
-        // Contar triángulos generados hoy (solo si es free)
         if (!userIsPro) {
-          const today = new Date().toISOString().split('T')[0];
-          const { count } = await supabase
-            .from('manifestation_triangles')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .gte('created_at', today);
-          setDailyTriangleCount(count ?? 0);
+          setDailyTriangleCount(dailyCount);
         }
         
-        // Fetch saved triangles
-        const { data, error } = await supabase
-          .from('manifestation_triangles')
-          .select('*')
-          .order('created_at', { ascending: false });
-          
-        if (!error && data) {
-          setSavedTriangles(data);
+        if (!trianglesError && trianglesData) {
+          setSavedTriangles(trianglesData);
         }
       }
       setLoadingTriangles(false);

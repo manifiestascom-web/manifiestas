@@ -31,38 +31,30 @@ export default function GratitudeTab() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+        const today = new Date().toISOString().split('T')[0];
 
-        // Cargar perfil para ver tier
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('id', user.id)
-          .single();
-          
+        // Cargar todo en paralelo (perfil, registros y conteo de hoy)
+        const [profileResult, entriesResult, countResult] = await Promise.all([
+          supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
+          supabase.from('gratitude_entries').select('*').order('created_at', { ascending: false }),
+          supabase.from('gratitude_entries').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', today)
+        ]);
+
+        const profile = profileResult.data;
+        const entriesData = entriesResult.data;
+        const entriesError = entriesResult.error;
+        const dailyCount = countResult.count ?? 0;
+
         if (profile) {
           const userIsPro = profile.subscription_tier === 'pro';
           setIsPro(userIsPro);
-
-          // Contar entradas de hoy para límite diario (solo si es free)
           if (!userIsPro) {
-            const today = new Date().toISOString().split('T')[0];
-            const { count } = await supabase
-              .from('gratitude_entries')
-              .select('*', { count: 'exact', head: true })
-              .eq('user_id', user.id)
-              .gte('created_at', today);
-            setDailyEntryCount(count ?? 0);
+            setDailyEntryCount(dailyCount);
           }
         }
 
-        // Cargar registros
-        const { data, error } = await supabase
-          .from('gratitude_entries')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (!error && data) {
-          setEntries(data);
+        if (!entriesError && entriesData) {
+          setEntries(entriesData);
         }
       }
       setLoading(false);

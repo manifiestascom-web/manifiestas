@@ -63,39 +63,30 @@ export default function CoachTab() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+        const today = new Date().toISOString().split('T')[0];
 
-        // Cargar perfil para ver tier
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('id', user.id)
-          .single();
-          
+        // Cargar todo en paralelo (perfil, mensajes y conteo diario)
+        const [profileResult, messagesResult, countResult] = await Promise.all([
+          supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
+          supabase.from('chat_messages').select('*').order('created_at', { ascending: true }),
+          supabase.from('chat_messages').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('sender', 'user').gte('created_at', today)
+        ]);
+
+        const profile = profileResult.data;
+        const messagesData = messagesResult.data;
+        const messagesError = messagesResult.error;
+        const dailyCount = countResult.count ?? 0;
+
         if (profile) {
           const userIsPro = profile.subscription_tier === 'pro';
           setIsPro(userIsPro);
-
-          // Contar mensajes enviados hoy para el límite diario (solo si es free)
           if (!userIsPro) {
-            const today = new Date().toISOString().split('T')[0];
-            const { count } = await supabase
-              .from('chat_messages')
-              .select('*', { count: 'exact', head: true })
-              .eq('user_id', user.id)
-              .eq('sender', 'user')
-              .gte('created_at', today);
-            setDailyMessageCount(count ?? 0);
+            setDailyMessageCount(dailyCount);
           }
         }
 
-        // Cargar mensajes de la base de datos
-        const { data, error } = await supabase
-          .from('chat_messages')
-          .select('*')
-          .order('created_at', { ascending: true });
-        
-        if (!error && data && data.length > 0) {
-          const mapped = data.map((msg: DBMessage) => ({
+        if (!messagesError && messagesData && messagesData.length > 0) {
+          const mapped = messagesData.map((msg: DBMessage) => ({
             id: msg.id,
             role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
             parts: [{ type: 'text' as const, text: msg.text }]

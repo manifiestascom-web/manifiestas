@@ -37,25 +37,22 @@ export default function GoalsTab() {
       if (user) {
         setUser(user);
         
-        // Cargar perfil para ver tier
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('id', user.id)
-          .single();
-          
+        // Cargar perfil y metas en paralelo
+        const [profileResult, goalsResult] = await Promise.all([
+          supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
+          supabase.from('goals').select('*').order('created_at', { ascending: false })
+        ]);
+
+        const profile = profileResult.data;
+        const goalsData = goalsResult.data;
+        const goalsError = goalsResult.error;
+
         if (profile) {
           setIsPro(profile.subscription_tier === 'pro');
         }
 
-        // Cargar metas
-        const { data, error } = await supabase
-          .from('goals')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (!error && data) {
-          setGoals(data);
+        if (!goalsError && goalsData) {
+          setGoals(goalsData);
         }
       }
       setLoading(false);

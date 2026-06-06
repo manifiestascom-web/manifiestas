@@ -73,33 +73,31 @@ export default function AffirmationsTab() {
       if (user) {
         setUser(user);
         
-        // Cargar perfil para ver tier de suscripción
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('id', user.id)
-          .single();
-          
+        // Cargar perfil y reto en paralelo
+        const profilePromise = supabase.from('profiles').select('subscription_tier').eq('id', user.id).single();
+        const challengePromise = selectedArea === 'mis_decretos' 
+          ? Promise.resolve({ data: null, error: null })
+          : supabase.from('challenges').select('*').eq('user_id', user.id).eq('area', selectedArea).maybeSingle();
+
+        const [profileResult, challengeResult] = await Promise.all([
+          profilePromise,
+          challengePromise
+        ]);
+
+        const profile = profileResult.data;
+        const challengeData = challengeResult.data;
+        const challengeError = challengeResult.error;
+
         if (profile) {
           setIsPro(profile.subscription_tier === 'pro');
         }
 
         if (selectedArea === 'mis_decretos') {
           setActiveChallenge(null);
+        } else if (!challengeError && challengeData) {
+          setActiveChallenge(challengeData);
         } else {
-          // Cargar el reto activo para el área seleccionada
-          const { data, error } = await supabase
-            .from('challenges')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('area', selectedArea)
-            .maybeSingle();
-
-          if (!error && data) {
-            setActiveChallenge(data);
-          } else {
-            setActiveChallenge(null);
-          }
+          setActiveChallenge(null);
         }
       }
       setLoading(false);
