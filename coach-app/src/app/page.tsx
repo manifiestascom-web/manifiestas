@@ -75,7 +75,7 @@ const faqs = [
   },
   {
     question: "¿Es gratis utilizar la aplicación?",
-    answer: "Sí. El plan gratuito incluye 3 mensajes diarios con el coach IA, 1 entrada de gratitud al día, 1 triángulo de manifestación al día, visualizaciones guiadas y 1 meta activa. Los límites se resetean cada día. El plan Pro ($9.99/mes) elimina todos los límites y desbloquea los retos de 30 días con IA."
+    answer: "Sí. El plan gratuito incluye 3 mensajes diarios con el coach IA, 1 entrada de gratitud al día, 1 triángulo de manifestación al día, visualizaciones guiadas y 1 meta activa. Los límites se resetean cada día. El plan Pro ($5.99/mes) elimina todos los límites y desbloquea los retos de 30 días con IA."
   }
 ];
 
@@ -337,7 +337,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.35 }}
               className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-text-secondary/70 select-none text-left w-full mt-1.5"
             >
-              <span>🛡️</span> Gratis para siempre  •  Pro desde $9.99/mes  •  Cancela cuando quieras
+              <span>🛡️</span> Gratis para siempre  •  Pro desde $5.99/mes  •  Cancela cuando quieras
             </motion.div>
 
             {/* Sintonizador de Riqueza Interactivo en el Hero */}
@@ -1460,10 +1460,10 @@ export default function LandingPage() {
                 <div>
                   <p className="text-xs font-bold text-primary dark:text-accent-gold uppercase tracking-widest mb-2">Pro — Frecuencia Plena</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-4xl font-black text-text-primary dark:text-white">$9.99</p>
+                    <p className="text-4xl font-black text-text-primary dark:text-white">$5.99</p>
                     <p className="text-text-secondary text-sm">/ mes</p>
                   </div>
-                  <p className="text-text-secondary text-sm mt-1">O $79.99/año — ahorra 33%</p>
+                  <p className="text-text-secondary text-sm mt-1">O $47.99/año — ahorra 33%</p>
                 </div>
                 <ul className="space-y-3 flex-1">
                   {["Coach de IA — mensajes ilimitados ∞", "Triángulos de Manifestación ilimitados ∞", "Retos de 30 Días personalizados con IA", "Diario de gratitud ilimitado ∞", "Metas ilimitadas con avance por días", "Decretos de abundancia guardados (Mis Decretos 🔺)", "Visualizaciones cuánticas ilimitadas", "Gestión de facturación con Stripe"].map((item) => (

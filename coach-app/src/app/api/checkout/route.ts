@@ -24,16 +24,22 @@ export async function POST(req: Request) {
       apiVersion: '2023-10-16' as any,
     });
 
+    const body = await req.json().catch(() => ({}));
+    const planType = body?.planType === 'yearly' ? 'yearly' : 'monthly';
+
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
-    const priceId = process.env.STRIPE_PRICE_ID;
-    if (!priceId || priceId === 'price_mockid') {
+    const priceId = planType === 'yearly' 
+      ? process.env.STRIPE_PRICE_ID_YEARLY 
+      : process.env.STRIPE_PRICE_ID;
+
+    if (!priceId || priceId === 'price_mockid' || priceId === 'price_mockyearlyid') {
       return NextResponse.json({ 
-        error: 'STRIPE_PRICE_ID no está configurada en .env.local. Crea un producto de suscripción recurrente en el dashboard de Stripe (modo prueba) y copia su Price ID.' 
+        error: `${planType === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID'} no está configurada en .env.local. Crea un producto de suscripción recurrente en el dashboard de Stripe (modo prueba) y copia su Price ID.` 
       }, { status: 400 });
     }
 
-    // Crear la sesión de checkout en Stripe para suscripción mensual
+    // Crear la sesión de checkout en Stripe para la suscripción seleccionada
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: user.email,
