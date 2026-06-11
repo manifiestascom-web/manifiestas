@@ -103,10 +103,18 @@ export default function PaywallPage() {
 
       {/* Botón de volver */}
       <button 
-        onClick={handleLogout}
-        className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-bold text-text-secondary hover:text-text-primary transition-colors cursor-pointer bg-bg-secondary border border-border-primary px-3 py-2 rounded-xl"
+        onClick={() => router.push("/app")}
+        className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-bold text-text-secondary hover:text-text-primary transition-colors cursor-pointer bg-bg-secondary border border-border-primary px-3 py-2 rounded-xl z-20"
       >
-        <IconArrowLeft size={16} /> Cerrar Sesión / Volver
+        <IconArrowLeft size={16} /> Volver a la App
+      </button>
+
+      {/* Botón de cerrar sesión */}
+      <button 
+        onClick={handleLogout}
+        className="absolute top-6 right-6 flex items-center gap-1.5 text-xs font-bold text-text-secondary hover:text-text-primary transition-colors cursor-pointer bg-bg-secondary border border-border-primary px-3 py-2 rounded-xl z-20"
+      >
+        Cerrar Sesión
       </button>
 
       <div className="w-full max-w-[860px] grid md:grid-cols-12 gap-8 items-stretch mt-12 md:mt-0 z-10">
