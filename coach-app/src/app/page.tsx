@@ -448,10 +448,10 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
-              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-[#1a1625] dark:text-white leading-tight tracking-tight"
+              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-[#0b2253] dark:text-white leading-tight tracking-tight font-serif"
             >
               La vida que deseas <br />
-              <span className="bg-gradient-to-r from-[#ff477e] via-[#c850c0] to-[#534AB7] bg-clip-text text-transparent italic font-serif">
+              <span className="bg-gradient-to-r from-[#ff007a] via-[#7e22ce] via-[#2563eb] to-[#00b4d8] bg-clip-text text-transparent font-caveat font-normal normal-case block mt-2 text-[38px] sm:text-[48px] lg:text-[60px] xl:text-[72px] py-1">
                 ya existe. Ve por ella.
               </span>
             </motion.h1>
@@ -615,33 +615,33 @@ export default function LandingPage() {
         </header>
 
         {/* Hero Section Container */}
-        <div className="relative w-full aspect-[2/3] overflow-hidden select-none">
+        <div className="relative w-full aspect-[2/3.2] overflow-hidden select-none">
           {/* Mockup Background Image */}
           <img
             src="/manifiestahero.webp"
             alt="Manifiestas Background"
-            className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+            className="absolute inset-0 w-full h-full object-cover object-bottom z-0 pointer-events-none"
           />
 
           {/* Sparkles, Title, Subtitle, and Buttons */}
-          <div className="absolute inset-x-0 top-0 bottom-[42%] flex flex-col items-center justify-center text-center px-5 pt-8 z-10">
+          <div className="absolute inset-x-0 top-[2%] flex flex-col items-center justify-start text-center px-5 pt-4 z-10">
             {/* Sparkles */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex justify-center items-center gap-1.5 mb-2 text-[#fbbf24] animate-pulse"
+              className="flex justify-center items-center gap-1.5 mb-1.5 text-amber-500 animate-pulse"
             >
-              <IconSparkles size={16} />
+              <IconSparkles size={14} />
             </motion.div>
 
             {/* Title */}
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-2xl xs:text-3xl font-black text-[#0f172a] leading-tight tracking-tight max-w-[280px]"
+              className="text-[22px] xs:text-[25px] font-black text-[#0b2253] dark:text-white leading-tight tracking-tight font-serif max-w-[280px]"
             >
               La vida que deseas <br />
-              <span className="bg-gradient-to-r from-[#ff477e] via-[#c850c0] to-[#534AB7] bg-clip-text text-transparent italic font-serif text-[26px] xs:text-[32px] block mt-0.5">
+              <span className="bg-gradient-to-r from-[#ff007a] via-[#7e22ce] via-[#2563eb] to-[#00b4d8] bg-clip-text text-transparent font-caveat font-normal normal-case text-[28px] xs:text-[34px] block mt-0.5 py-0.5">
                 ya existe. Ve por ella.
               </span>
             </motion.h1>
@@ -650,7 +650,7 @@ export default function LandingPage() {
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-[#64748b] text-[11px] xs:text-xs leading-relaxed max-w-[270px] mt-2"
+              className="text-[#64748b] text-[10.5px] xs:text-[11.5px] leading-relaxed max-w-[260px] mt-1.5"
             >
               Alinea tu mente, tus emociones y tus acciones para manifestar tus sueños con herramientas guiadas por IA diseñadas para ti.
             </motion.p>
@@ -659,18 +659,18 @@ export default function LandingPage() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-2 w-full max-w-[220px] mt-4"
+              className="flex flex-col gap-2 w-full max-w-[210px] mt-3"
             >
               <Link
                 href="/app"
-                className="w-full py-3 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/20 transition-all text-center flex items-center justify-center gap-1"
+                className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
               >
                 Comenzar gratis
                 <span className="text-[10px]">❯</span>
               </Link>
               <a
                 href="#demo"
-                className="w-full py-2.5 rounded-full border-2 border-[#8b5cf6] text-[#8b5cf6] font-bold text-xs bg-white/50 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
               >
                 <span className="inline-block scale-75">▶</span> Ver cómo funciona
               </a>

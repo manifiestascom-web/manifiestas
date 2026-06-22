@@ -3,6 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --font-caveat: var(--font-caveat), cursive;
   --color-primary: #534AB7;
   --color-primary-dark: #3C3489;
   --color-primary-light: #EEEDFE;
