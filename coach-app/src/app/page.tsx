@@ -587,16 +587,16 @@ export default function LandingPage() {
       </section>
 
       {/* ─── VISTA MÓVIL ─── */}
-      <div className="block md:hidden relative w-full bg-gradient-to-b from-[#FFF3EC] via-[#FDE8F5] to-[#EBE4FC]">
+      <div className="block md:hidden relative w-full bg-gradient-to-b from-[#FFF3EC] via-[#FDE8F5] to-[#EBE4FC] dark:from-[#090518] dark:via-[#0c0721] dark:to-[#080312]">
         
         {/* Mobile Header (sits on top of the hero background) */}
-        <header className="relative z-50 flex justify-between items-center px-4 py-3 bg-white/95 backdrop-blur-md border-b border-black/5">
+        <header className="relative z-50 flex justify-between items-center px-4 py-3 bg-white/95 dark:bg-[#0c0721]/95 backdrop-blur-md border-b border-black/5 dark:border-white/5">
           {/* Left Side: Hamburger + Logo */}
           <div className="flex items-center gap-2">
             {/* Menu Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-1 text-[#1a1625] hover:bg-black/5 rounded-lg transition-colors"
+              className="p-1 text-[#1a1625] dark:text-white hover:bg-black/5 rounded-lg transition-colors"
               aria-label="Abrir menú"
             >
               <IconMenu2 size={22} />
