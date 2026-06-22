@@ -604,8 +604,8 @@ export default function LandingPage() {
             
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1.5 shrink-0">
-              <img src="/logosuperior.webp" alt="Manifiestas Logo" className="h-6 object-contain" />
-              <span className="font-serif font-bold text-[#0b2253] dark:text-white text-base tracking-tight leading-none mt-0.5">
+              <img src="/logosuperior.webp" alt="Manifiestas Logo" className="h-[21px] object-contain" />
+              <span className="font-serif font-bold text-[#0b2253] dark:text-white text-[18px] tracking-tight leading-none">
                 manifiestas
               </span>
             </Link>
