@@ -590,22 +590,28 @@ export default function LandingPage() {
       <div className="block md:hidden relative w-full bg-gradient-to-b from-[#FFF3EC] via-[#FDE8F5] to-[#EBE4FC]">
         
         {/* Mobile Header (sits on top of the hero background) */}
-        <header className="relative z-50 flex justify-between items-center px-4 py-3.5 bg-white/80 backdrop-blur-md border-b border-black/5">
-          {/* Menu Hamburger */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="p-1 text-[#1a1625]"
-            aria-label="Abrir menú"
-          >
-            <IconMenu2 size={22} />
-          </button>
+        <header className="relative z-50 flex justify-between items-center px-4 py-3 bg-white/95 backdrop-blur-md border-b border-black/5">
+          {/* Left Side: Hamburger + Logo */}
+          <div className="flex items-center gap-2">
+            {/* Menu Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-1 text-[#1a1625] hover:bg-black/5 rounded-lg transition-colors"
+              aria-label="Abrir menú"
+            >
+              <IconMenu2 size={22} />
+            </button>
+            
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-1.5 shrink-0">
+              <img src="/logosuperior.webp" alt="Manifiestas Logo" className="h-6 object-contain" />
+              <span className="font-serif font-bold text-[#0b2253] dark:text-white text-base tracking-tight leading-none mt-0.5">
+                manifiestas
+              </span>
+            </Link>
+          </div>
           
-          {/* Logo */}
-          <Link href="/">
-            <img src="/logosuperior.webp" alt="Manifiestas Logo" className="h-7 object-contain" />
-          </Link>
-          
-          {/* Comenzar gratis Button */}
+          {/* Right Side: Comenzar gratis Button */}
           <Link
             href="/app"
             className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15"
@@ -615,7 +621,7 @@ export default function LandingPage() {
         </header>
 
         {/* Hero Section Container */}
-        <div className="relative w-full aspect-[2/3.2] overflow-hidden select-none">
+        <div className="relative w-full aspect-[2/3.4] overflow-hidden select-none">
           {/* Mockup Background Image */}
           <img
             src="/manifiestahero.webp"
@@ -650,7 +656,7 @@ export default function LandingPage() {
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-[#64748b] text-[10.5px] xs:text-[11.5px] leading-relaxed max-w-[260px] mt-1.5"
+              className="text-[#1e293b] dark:text-slate-350 text-[10.5px] xs:text-[11.5px] leading-relaxed max-w-[260px] mt-1.5 font-medium"
             >
               Alinea tu mente, tus emociones y tus acciones para manifestar tus sueños con herramientas guiadas por IA diseñadas para ti.
             </motion.p>
