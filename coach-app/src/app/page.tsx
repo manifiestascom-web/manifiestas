@@ -378,25 +378,25 @@ export default function LandingPage() {
                 text="Confío"
                 bg="bg-[#FDE2E4]"
                 rotate="-rotate-6"
-                className="absolute -top-5 -left-5 z-20 shadow-md"
+                className="absolute top-[8%] -right-8 z-20 shadow-md"
               />
               <StickyNote
                 text="Merezco"
                 bg="bg-[#FFF9C4]"
                 rotate="rotate-3"
-                className="absolute top-20 -right-6 z-20 shadow-md"
+                className="absolute top-[29%] -right-10 z-20 shadow-md"
               />
               <StickyNote
                 text="Agradezco"
                 bg="bg-[#E3F2FD]"
                 rotate="-rotate-3"
-                className="absolute bottom-24 -left-5 z-20 shadow-md"
+                className="absolute top-[50%] -right-8 z-20 shadow-md"
               />
               <StickyNote
                 text="Yo puedo"
                 bg="bg-[#FCE4EC]"
                 rotate="rotate-6"
-                className="absolute -bottom-4 -right-4 z-20 shadow-md"
+                className="absolute top-[71%] -right-10 z-20 shadow-md"
               />
 
               {/* Imagen mujer */}
@@ -417,17 +417,6 @@ export default function LandingPage() {
 
           {/* ── Columna CENTRAL: contenido ── */}
           <div className="col-span-12 md:col-span-6 text-center flex flex-col items-center gap-5">
-
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#534AB7]/8 border border-[#534AB7]/15 text-[10px] sm:text-xs font-bold text-[#534AB7] dark:text-violet-400 tracking-wide uppercase"
-            >
-              <IconSparkles size={11} className="animate-pulse" />
-              Coach de Manifestación con Inteligencia Artificial
-            </motion.div>
 
             {/* Logo central */}
             <motion.div
@@ -524,20 +513,6 @@ export default function LandingPage() {
           {/* ── Columna DERECHA: celular + polaroids ── */}
           <div className="col-span-12 md:col-span-3 flex justify-center items-center relative min-h-[280px] md:min-h-[420px]">
             <div className="relative w-full max-w-[220px] md:max-w-none mx-auto">
-              {/* Sticky notes flotantes derecha */}
-              <StickyNote
-                text={"Libertad\nTiempo\nViajes\nAbundancia"}
-                bg="bg-[#FFF9C4]"
-                rotate="-rotate-6"
-                className="absolute -top-4 -left-6 z-20 shadow-md"
-              />
-              <StickyNote
-                text={"Enfoque\nDisciplina\nFe\nAcción"}
-                bg="bg-[#FCE4EC]"
-                rotate="rotate-6"
-                className="absolute bottom-4 -right-5 z-20 shadow-md"
-              />
-
               {/* Imagen celular/polaroids */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -572,14 +547,14 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.08 * i }}
-              className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-5 rounded-3xl flex flex-col gap-3 hover:scale-[1.03] transition-all duration-300 border border-white/80 dark:border-white/10 shadow-sm"
+              className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-6 rounded-3xl flex flex-col items-center text-center gap-4 hover:scale-[1.03] transition-all duration-300 border border-white/80 dark:border-white/10 shadow-sm"
             >
-              <div className={`w-9 h-9 rounded-2xl flex items-center justify-center border ${item.color}`}>
-                <item.icon size={18} stroke={2} />
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center border ${item.color}`}>
+                <item.icon size={22} stroke={2} />
               </div>
-              <div>
+              <div className="flex flex-col gap-1.5">
                 <h4 className="text-xs font-bold text-[#1a1625] dark:text-white leading-snug">{item.title}</h4>
-                <p className="text-[11px] text-[#6b667a] dark:text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
+                <p className="text-[11px] text-[#6b667a] dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
