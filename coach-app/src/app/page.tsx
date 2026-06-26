@@ -676,21 +676,35 @@ export default function LandingPage() {
           </div>
           
           {/* Right Side: Comenzar gratis / Ir a la App Button */}
-          {user ? (
-            <Link
-              href="/app"
-              className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15 flex items-center gap-1"
-            >
-              Ir a la App {isPro && <span className="text-[8px] bg-white/20 text-white px-1 py-0.2 rounded-full font-black uppercase">PRO</span>}
-            </Link>
-          ) : (
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => handleSubscribeClick("monthly")}
-              className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15"
+              onClick={toggleTheme}
+              type="button"
+              className="p-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[#534AB7] dark:text-white"
+              aria-label="Cambiar tema"
             >
-              Probar Pro
+              {theme === "dark" ? (
+                <IconSun size={15} className="text-amber-400" />
+              ) : (
+                <IconMoon size={15} />
+              )}
             </button>
-          )}
+            {user ? (
+              <Link
+                href="/app"
+                className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15 flex items-center gap-1"
+              >
+                Ir a la App {isPro && <span className="text-[8px] bg-white/20 text-white px-1 py-0.2 rounded-full font-black uppercase">PRO</span>}
+              </Link>
+            ) : (
+              <button
+                onClick={() => handleSubscribeClick("monthly")}
+                className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15"
+              >
+                Probar Pro
+              </button>
+            )}
+          </div>
         </header>
 
         {/* Hero Section Container */}
@@ -717,7 +731,7 @@ export default function LandingPage() {
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-[22px] xs:text-[25px] font-black text-[#0b2253] dark:text-white leading-tight tracking-tight font-serif max-w-[280px]"
+              className="text-[22px] xs:text-[25px] font-black text-[#0b2253] leading-tight tracking-tight font-serif max-w-[280px]"
             >
               La vida que deseas <br />
               <span className="bg-gradient-to-r from-[#ff007a] via-[#7e22ce] via-[#2563eb] to-[#00b4d8] bg-clip-text text-transparent font-caveat font-normal normal-case text-[28px] xs:text-[34px] block mt-0.5 py-0.5">
@@ -729,7 +743,7 @@ export default function LandingPage() {
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-[#1e293b] dark:text-slate-350 text-[10.5px] xs:text-[11.5px] leading-relaxed max-w-[260px] mt-1.5 font-medium"
+              className="text-[#1e293b] text-[10.5px] xs:text-[11.5px] leading-relaxed max-w-[260px] mt-1.5 font-medium"
             >
               Alinea tu mente, tus emociones y tus acciones para manifestar tus sueños con herramientas guiadas por IA diseñadas para ti.
             </motion.p>
