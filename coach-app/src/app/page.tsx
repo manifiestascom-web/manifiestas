@@ -752,22 +752,22 @@ export default function LandingPage() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-2.5 w-full max-w-[250px] mt-4.5"
+              className="flex flex-col gap-2 w-full max-w-[210px] mt-3"
             >
               {user ? (
                 isPro ? (
                   <Link
                     href="/app"
-                    className="w-full py-3 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-sm shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
                   >
                     Ir a la App (Premium)
-                    <span className="text-[12px]">❯</span>
+                    <span className="text-[10px]">❯</span>
                   </Link>
                 ) : (
                   <>
                     <motion.button
                       onClick={() => handleSubscribeClick("monthly")}
-                      className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-sm shadow-lg shadow-[#ff8a00]/25 transition-all text-center flex items-center justify-center gap-1.5 border-none cursor-pointer"
+                      className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-lg shadow-[#ff8a00]/25 transition-all text-center flex items-center justify-center gap-1 border-none cursor-pointer"
                       animate={{
                         scale: [1, 1.03, 1],
                         boxShadow: [
@@ -783,11 +783,11 @@ export default function LandingPage() {
                       }}
                     >
                       Adquirir Premium Pro
-                      <span className="text-[12px]">❯</span>
+                      <span className="text-[10px]">❯</span>
                     </motion.button>
                     <Link
                       href="/app"
-                      className="w-full py-2.5 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-[13px] bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                      className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
                     >
                       Ir a la App (Básico)
                     </Link>
@@ -797,7 +797,7 @@ export default function LandingPage() {
                 <>
                   <motion.button
                     onClick={() => handleSubscribeClick("monthly")}
-                    className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-sm shadow-lg shadow-[#ff8a00]/25 transition-all text-center flex items-center justify-center gap-1.5 border-none cursor-pointer"
+                    className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-lg shadow-[#ff8a00]/25 transition-all text-center flex items-center justify-center gap-1 border-none cursor-pointer"
                     animate={{
                       scale: [1, 1.03, 1],
                       boxShadow: [
@@ -813,11 +813,11 @@ export default function LandingPage() {
                     }}
                   >
                     Adquirir Premium Pro
-                    <span className="text-[12px]">❯</span>
+                    <span className="text-[10px]">❯</span>
                   </motion.button>
                   <Link
                     href="/app"
-                    className="w-full py-2.5 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-[13px] bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                    className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
                   >
                     Comenzar gratis
                   </Link>
