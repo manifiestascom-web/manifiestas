@@ -718,20 +718,20 @@ export default function LandingPage() {
 
           {/* Sparkles, Title, Subtitle, and Buttons */}
           <div className="absolute inset-x-0 top-[2%] flex flex-col items-center justify-start text-center px-5 pt-4 z-10">
-            {/* Sparkles */}
+            {/* Logo brand instead of simple sparkles */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex justify-center items-center gap-1.5 mb-1.5 text-amber-500 animate-pulse"
+              className="flex justify-center items-center gap-1.5 mb-2.5 animate-pulse"
             >
-              <IconSparkles size={14} />
+              <img src="/logosuperior.webp" alt="Manifiestas Logo" className="h-6 object-contain" />
             </motion.div>
 
             {/* Title */}
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-[22px] xs:text-[25px] font-black text-[#0b2253] leading-tight tracking-tight font-serif max-w-[280px]"
+              className="text-[25px] xs:text-[28px] font-black text-[#0b2253] leading-tight tracking-tight font-serif max-w-[310px]"
             >
               La vida que deseas <br />
               <span className="bg-gradient-to-r from-[#ff007a] via-[#7e22ce] via-[#2563eb] to-[#00b4d8] bg-clip-text text-transparent font-caveat font-normal normal-case text-[28px] xs:text-[34px] block mt-0.5 py-0.5">
@@ -743,7 +743,7 @@ export default function LandingPage() {
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-[#1e293b] text-[10.5px] xs:text-[11.5px] leading-relaxed max-w-[260px] mt-1.5 font-medium"
+              className="text-[#1e293b] text-[12.5px] xs:text-[13.5px] leading-relaxed max-w-[290px] mt-2 font-medium"
             >
               Alinea tu mente, tus emociones y tus acciones para manifestar tus sueños con herramientas guiadas por IA diseñadas para ti.
             </motion.p>
@@ -752,29 +752,42 @@ export default function LandingPage() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-2 w-full max-w-[210px] mt-3"
+              className="flex flex-col gap-2.5 w-full max-w-[250px] mt-4.5"
             >
               {user ? (
                 isPro ? (
                   <Link
                     href="/app"
-                    className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
+                    className="w-full py-3 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-sm shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1.5"
                   >
                     Ir a la App (Premium)
-                    <span className="text-[10px]">❯</span>
+                    <span className="text-[12px]">❯</span>
                   </Link>
                 ) : (
                   <>
-                    <button
+                    <motion.button
                       onClick={() => handleSubscribeClick("monthly")}
-                      className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
+                      className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-sm shadow-lg shadow-[#ff8a00]/25 transition-all text-center flex items-center justify-center gap-1.5 border-none cursor-pointer"
+                      animate={{
+                        scale: [1, 1.03, 1],
+                        boxShadow: [
+                          "0 4px 6px -1px rgba(255, 138, 0, 0.15), 0 2px 4px -1px rgba(255, 138, 0, 0.1)",
+                          "0 10px 15px -3px rgba(255, 138, 0, 0.3), 0 4px 6px -2px rgba(255, 138, 0, 0.15)",
+                          "0 4px 6px -1px rgba(255, 138, 0, 0.15), 0 2px 4px -1px rgba(255, 138, 0, 0.1)"
+                        ]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
                     >
                       Adquirir Premium Pro
-                      <span className="text-[10px]">❯</span>
-                    </button>
+                      <span className="text-[12px]">❯</span>
+                    </motion.button>
                     <Link
                       href="/app"
-                      className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                      className="w-full py-2.5 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-[13px] bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
                     >
                       Ir a la App (Básico)
                     </Link>
@@ -782,16 +795,29 @@ export default function LandingPage() {
                 )
               ) : (
                 <>
-                  <button
+                  <motion.button
                     onClick={() => handleSubscribeClick("monthly")}
-                    className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
+                    className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-sm shadow-lg shadow-[#ff8a00]/25 transition-all text-center flex items-center justify-center gap-1.5 border-none cursor-pointer"
+                    animate={{
+                      scale: [1, 1.03, 1],
+                      boxShadow: [
+                        "0 4px 6px -1px rgba(255, 138, 0, 0.15), 0 2px 4px -1px rgba(255, 138, 0, 0.1)",
+                        "0 10px 15px -3px rgba(255, 138, 0, 0.3), 0 4px 6px -2px rgba(255, 138, 0, 0.15)",
+                        "0 4px 6px -1px rgba(255, 138, 0, 0.15), 0 2px 4px -1px rgba(255, 138, 0, 0.1)"
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
                   >
                     Adquirir Premium Pro
-                    <span className="text-[10px]">❯</span>
-                  </button>
+                    <span className="text-[12px]">❯</span>
+                  </motion.button>
                   <Link
                     href="/app"
-                    className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                    className="w-full py-2.5 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-[13px] bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
                   >
                     Comenzar gratis
                   </Link>
