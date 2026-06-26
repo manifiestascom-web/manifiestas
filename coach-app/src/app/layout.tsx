@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Caveat } from "next/font/google";
+import MetaPixel from "@/components/analytics/MetaPixel";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,7 +18,7 @@ const caveat = Caveat({
   subsets: ["latin"],
 });
 
-const APP_URL = "https://manifiestas.ai";
+const APP_URL = "https://www.manifiestas.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
@@ -107,6 +108,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         {children}
+        <MetaPixel />
       </body>
     </html>
   );

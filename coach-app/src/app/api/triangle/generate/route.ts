@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 
 export const dynamic = 'force-dynamic';
@@ -65,7 +65,7 @@ Devuelve únicamente la afirmación generada en formato de texto plano, sin comi
 
     // 4. Llamar a Gemini 2.5 Flash
     const { text } = await generateText({
-      model: google('gemini-2.5-flash'),
+      model: openai('gpt-4o-mini'),
       prompt: prompt,
     });
 

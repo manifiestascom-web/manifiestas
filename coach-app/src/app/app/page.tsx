@@ -8,6 +8,7 @@ import AffirmationsTab from "@/components/tabs/AffirmationsTab";
 import GoalsTab from "@/components/tabs/GoalsTab";
 import GratitudeTab from "@/components/tabs/GratitudeTab";
 import VisualizeTab from "@/components/tabs/VisualizeTab";
+import * as fpixel from "@/utils/fpixel";
 
 export default function AppHome() {
   const [activeTab, setActiveTab] = useState<TabType>("coach");
@@ -21,6 +22,24 @@ export default function AppHome() {
     };
     window.addEventListener("change-tab", handleTabChange);
     return () => window.removeEventListener("change-tab", handleTabChange);
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("checkout") === "success") {
+        // Track Subscribe event for Meta Pixel
+        fpixel.event("Subscribe", {
+          value: 5.99,
+          currency: "USD",
+          content_category: "Suscripción"
+        });
+
+        // Clean URL to prevent double tracking on page refreshes
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState(null, "", cleanUrl);
+      }
+    }
   }, []);
 
   return (

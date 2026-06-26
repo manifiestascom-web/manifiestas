@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -12,6 +13,7 @@ import {
   IconLoader2
 } from "@tabler/icons-react";
 import { createClient } from "@/utils/supabase/client";
+import * as fpixel from "@/utils/fpixel";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,6 +26,27 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [redirectTo, setRedirectTo] = useState("/app");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get("next");
+      const plan = params.get("plan");
+      const auto = params.get("auto");
+      
+      if (next) {
+        let url = next;
+        if (!url.includes("plan=") && plan) {
+          url += (url.includes("?") ? "&" : "?") + `plan=${plan}`;
+        }
+        if (!url.includes("auto=") && auto) {
+          url += (url.includes("?") ? "&" : "?") + `auto=${auto}`;
+        }
+        setRedirectTo(url);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +57,7 @@ export default function LoginPage() {
     try {
       if (isSignUp) {
         // Registro de usuario
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -46,8 +69,15 @@ export default function LoginPage() {
 
         if (error) throw error;
         
-        setSuccessMsg("¡Registro exitoso! Por favor verifica tu correo electrónico.");
-        // Opcional: Auto login o redirección
+        // Track CompleteRegistration event for Meta Pixel
+        fpixel.event("CompleteRegistration");
+        
+        if (data?.session) {
+          router.push(redirectTo);
+          router.refresh();
+        } else {
+          setSuccessMsg("¡Registro exitoso! Por favor verifica tu correo electrónico.");
+        }
       } else {
         // Login de usuario
         const { error } = await supabase.auth.signInWithPassword({
@@ -57,8 +87,8 @@ export default function LoginPage() {
 
         if (error) throw error;
 
-        // Redirigir a la app
-        router.push("/app");
+        // Redirigir a la url de retorno
+        router.push(redirectTo);
         router.refresh();
       }
     } catch (err: any) {
@@ -75,7 +105,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
         },
       });
       if (error) throw error;
@@ -99,9 +129,12 @@ export default function LoginPage() {
         className="w-full max-w-[440px] glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-border-primary/80 z-10"
       >
         <div className="text-center mb-8 flex flex-col items-center">
-          <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center text-primary mb-4 shadow-sm">
-            <IconSparkles size={24} className="animate-pulse" />
-          </div>
+          <Link href="/" className="flex items-center gap-2 mb-6 cursor-pointer">
+            <img src="/logosuperior.webp" alt="Manifiestas Logo" className="h-8 object-contain" />
+            <span className="font-serif font-black text-[#0b2253] dark:text-white text-2xl tracking-tight leading-none">
+              manifiestas
+            </span>
+          </Link>
           <h1 className="text-2xl font-black tracking-tight text-text-primary">
             {isSignUp ? "Crear cuenta cuántica" : "Iniciar Alineación"}
           </h1>

@@ -12,6 +12,7 @@ import {
   IconLock
 } from "@tabler/icons-react";
 import { createClient } from "@/utils/supabase/client";
+import * as fpixel from "@/utils/fpixel";
 
 export default function PaywallPage() {
   const router = useRouter();
@@ -23,9 +24,51 @@ export default function PaywallPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
 
+  const startStripeCheckout = async (plan: "monthly" | "yearly") => {
+    setPaying(true);
+    setErrorMsg("");
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ planType: plan }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error al iniciar Stripe Checkout");
+      }
+
+      if (data.url) {
+        // Track InitiateCheckout event for Meta Pixel
+        fpixel.event("InitiateCheckout", {
+          value: plan === "yearly" ? 47.99 : 5.99,
+          currency: "USD",
+          content_name: plan === "yearly" ? "Plan Premium Anual" : "Plan Premium Mensual",
+          content_category: "Suscripción",
+        });
+
+        // Redirigir a la pasarela segura de Stripe
+        window.location.href = data.url;
+      } else {
+        throw new Error("No se recibió la URL de pago de Stripe");
+      }
+    } catch (err: any) {
+      console.error("Error al procesar la suscripción:", err);
+      setErrorMsg(err.message || "Ocurrió un error inesperado al procesar la suscripción.");
+      setPaying(false);
+    }
+  };
+
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      let isProUser = false;
+
       if (user) {
         setUser(user);
         
@@ -37,10 +80,30 @@ export default function PaywallPage() {
           .single();
           
         if (profile?.subscription_tier === 'pro') {
+          isProUser = true;
           router.push('/app');
           return;
         }
       }
+
+      if (user && !isProUser) {
+        const params = new URLSearchParams(window.location.search);
+        const plan = params.get("plan");
+        const auto = params.get("auto");
+        
+        let selectedPlan: "monthly" | "yearly" = "monthly";
+        if (plan === "yearly" || plan === "monthly") {
+          selectedPlan = plan;
+          setBillingPeriod(plan);
+        }
+        
+        if (auto === "true") {
+          setLoading(false);
+          await startStripeCheckout(selectedPlan);
+          return;
+        }
+      }
+
       setLoading(false);
     };
     checkUser();
@@ -49,35 +112,7 @@ export default function PaywallPage() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    setPaying(true);
-    setErrorMsg("");
-
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ planType: billingPeriod }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error al iniciar Stripe Checkout");
-      }
-
-      if (data.url) {
-        // Redirigir a la pasarela segura de Stripe
-        window.location.href = data.url;
-      } else {
-        throw new Error("No se recibió la URL de pago de Stripe");
-      }
-    } catch (err: any) {
-      console.error("Error al procesar la suscripción:", err);
-      setErrorMsg(err.message || "Ocurrió un error inesperado al procesar la suscripción.");
-      setPaying(false);
-    }
+    await startStripeCheckout(billingPeriod);
   };
 
   const handleLogout = async () => {

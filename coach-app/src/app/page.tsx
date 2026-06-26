@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { createClient } from "@/utils/supabase/client";
 import {
   IconSparkles,
   IconTarget,
@@ -102,6 +103,37 @@ function StickyNote({
 export default function LandingPage() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isPro, setIsPro] = useState(false);
+  const [pricingPeriod, setPricingPeriod] = useState<"monthly" | "yearly">("monthly");
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("subscription_tier")
+          .eq("id", user.id)
+          .single();
+        if (profile?.subscription_tier === "pro") {
+          setIsPro(true);
+        }
+      }
+    };
+    checkUser();
+  }, []);
+
+  const handleSubscribeClick = (plan: "monthly" | "yearly") => {
+    if (user) {
+      window.location.href = `/paywall?plan=${plan}&auto=true`;
+    } else {
+      const nextUrl = encodeURIComponent(`/paywall?plan=${plan}&auto=true`);
+      window.location.href = `/login?next=${nextUrl}`;
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -252,6 +284,9 @@ export default function LandingPage() {
               alt="Manifiestas Logo"
               className="h-8 sm:h-9 object-contain"
             />
+            <span className="font-serif font-bold text-[#0b2253] dark:text-white text-xl sm:text-2xl tracking-tight leading-none">
+              manifiestas
+            </span>
           </Link>
 
           {/* Nav desktop */}
@@ -281,12 +316,29 @@ export default function LandingPage() {
               )}
             </button>
 
-            <Link
-              href="/app"
-              className="hidden sm:inline-flex px-5 py-2.5 rounded-full bg-[#534AB7] hover:bg-[#3C3489] text-white font-bold text-sm transition-all shadow-md shadow-[#534AB7]/20 hover:scale-[1.02]"
-            >
-              Comenzar gratis
-            </Link>
+            {user ? (
+              <Link
+                href="/app"
+                className="hidden sm:inline-flex px-5 py-2.5 rounded-full bg-[#534AB7] hover:bg-[#3C3489] text-white font-bold text-sm transition-all shadow-md shadow-[#534AB7]/20 hover:scale-[1.02] items-center gap-1.5"
+              >
+                Ir a la App {isPro && <span className="text-[9px] bg-accent-gold/20 text-accent-gold px-1.5 py-0.5 rounded-full font-black uppercase">PRO</span>}
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="hidden sm:inline-flex text-sm font-semibold hover:text-[#534AB7] dark:hover:text-white transition-colors mr-2 text-[#1a1625]/75 dark:text-white/75"
+                >
+                  Iniciar sesión
+                </Link>
+                <button
+                  onClick={() => handleSubscribeClick("monthly")}
+                  className="hidden sm:inline-flex px-5 py-2.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-95 text-white font-bold text-sm transition-all shadow-md shadow-[#ff477e]/20 hover:scale-[1.02]"
+                >
+                  Probar Pro
+                </button>
+              </div>
+            )}
 
             {/* Hamburger — mobile only */}
             <button
@@ -341,13 +393,34 @@ export default function LandingPage() {
                   {l.label}
                 </a>
               ))}
-              <Link
-                href="/app"
-                className="mt-2 py-3 px-4 rounded-xl bg-[#534AB7] text-white font-bold text-sm text-center"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Comenzar gratis
-              </Link>
+              {user ? (
+                <Link
+                  href="/app"
+                  className="mt-2 py-3 px-4 rounded-xl bg-[#534AB7] text-white font-bold text-sm text-center flex items-center justify-center gap-1.5"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Ir a la App {isPro && <span className="text-[9px] bg-accent-gold/20 text-accent-gold px-1.5 py-0.5 rounded-full font-black uppercase">PRO</span>}
+                </Link>
+              ) : (
+                <div className="flex flex-col gap-2 mt-2">
+                  <Link
+                    href="/login"
+                    className="py-3 px-4 rounded-xl border border-black/10 dark:border-white/10 text-center font-bold text-sm text-[#1a1625] dark:text-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Iniciar sesión
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleSubscribeClick("monthly");
+                    }}
+                    className="py-3 px-4 rounded-xl bg-gradient-to-r from-[#ff477e] to-[#534AB7] text-white font-bold text-sm text-center"
+                  >
+                    Probar Pro
+                  </button>
+                </div>
+              )}
             </nav>
           </motion.div>
         )}
@@ -366,70 +439,57 @@ export default function LandingPage() {
       </div>
 
       {/* ─── HERO — 3 COLUMNAS ─── */}
-      <section className="hidden md:block relative max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-16 md:pt-16 md:pb-24 z-10 overflow-hidden">
+      <section className="hidden md:block relative w-full pt-0 pb-16 z-10 overflow-hidden">
         <EnergyParticles />
-        <div className="relative z-10 grid grid-cols-12 gap-6 md:gap-8 items-center">
+        <div className="relative z-10 grid grid-cols-12 gap-0 items-stretch min-h-[500px] lg:min-h-[600px] w-full">
 
-          {/* ── Columna IZQUIERDA: mujer + sticky notes ── */}
-          <div className="col-span-12 md:col-span-3 flex justify-center items-center relative min-h-[280px] md:min-h-[420px]">
-            <div className="relative w-full max-w-[220px] md:max-w-none mx-auto">
-              {/* Sticky notes flotantes izquierda */}
-              <StickyNote
-                text="Confío"
-                bg="bg-[#FDE2E4]"
-                rotate="-rotate-6"
-                className="absolute top-[8%] -right-8 z-20 shadow-md"
+          {/* ── Columna IZQUIERDA: mujer ── */}
+          <div className="col-span-12 md:col-span-4 relative overflow-hidden h-full">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="w-full h-full"
+              style={{
+                maskImage: "linear-gradient(to right, black 65%, transparent 95%)",
+                WebkitMaskImage: "linear-gradient(to right, black 65%, transparent 95%)"
+              }}
+            >
+              <img
+                src="/imagenprincipal.webp"
+                alt="Mujer escribiendo su diario de manifestación"
+                className="w-full h-full object-cover object-left select-none"
               />
-              <StickyNote
-                text="Merezco"
-                bg="bg-[#FFF9C4]"
-                rotate="rotate-3"
-                className="absolute top-[29%] -right-10 z-20 shadow-md"
-              />
-              <StickyNote
-                text="Agradezco"
-                bg="bg-[#E3F2FD]"
-                rotate="-rotate-3"
-                className="absolute top-[50%] -right-8 z-20 shadow-md"
-              />
-              <StickyNote
-                text="Yo puedo"
-                bg="bg-[#FCE4EC]"
-                rotate="rotate-6"
-                className="absolute top-[71%] -right-10 z-20 shadow-md"
-              />
-
-              {/* Imagen mujer */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="rounded-[2rem] overflow-hidden shadow-2xl border border-white/60"
-              >
-                <img
-                  src="/imagenprincipal.webp"
-                  alt="Mujer escribiendo su diario de manifestación"
-                  className="w-full h-auto object-cover"
-                />
-              </motion.div>
-            </div>
+            </motion.div>
           </div>
 
           {/* ── Columna CENTRAL: contenido ── */}
-          <div className="col-span-12 md:col-span-6 text-center flex flex-col items-center gap-5">
+          <div className="col-span-12 md:col-span-5 text-center flex flex-col items-center justify-center gap-5 py-12 px-6 lg:px-12">
+
+            {/* Sparkles arriba del logo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex justify-center items-center gap-1.5 text-[#fbbf24] mb-1"
+            >
+              <IconSparkles size={18} className="animate-pulse" />
+            </motion.div>
 
             {/* Logo central */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="w-full flex justify-center"
+              className="flex flex-col items-center gap-2"
             >
               <img
-                src="/manifiestahero.webp"
-                alt="Manifiestas"
-                className="h-14 sm:h-20 object-contain drop-shadow-sm"
+                src="/logosuperior.webp"
+                alt="Manifiestas Icon"
+                className="h-14 sm:h-16 object-contain"
               />
+              <span className="font-serif font-black text-[#0b2253] dark:text-white text-3xl sm:text-4xl tracking-tight leading-none">
+                manifiestas
+              </span>
             </motion.div>
 
             {/* Titular */}
@@ -465,18 +525,46 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-3 w-full justify-center"
             >
-              <Link
-                href="/app"
-                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-[#ff477e]/20 transition-all text-center hover:scale-[1.02]"
-              >
-                Comenzar gratis
-              </Link>
-              <a
-                href="#demo"
-                className="px-8 py-3.5 rounded-full border-2 border-[#534AB7] hover:bg-[#534AB7]/8 text-[#534AB7] dark:text-white font-bold text-sm transition-all text-center flex items-center justify-center gap-1.5"
-              >
-                <IconPlayerPlayFilled size={13} /> Ver cómo funciona
-              </a>
+              {user ? (
+                isPro ? (
+                  <Link
+                    href="/app"
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-[#ff477e]/20 transition-all text-center hover:scale-[1.02]"
+                  >
+                    Ir a la App (Premium Activo)
+                  </Link>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleSubscribeClick("monthly")}
+                      className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-[#ff477e]/20 transition-all text-center hover:scale-[1.02]"
+                    >
+                      Adquirir Premium Pro
+                    </button>
+                    <Link
+                      href="/app"
+                      className="px-8 py-3.5 rounded-full border-2 border-[#534AB7] hover:bg-[#534AB7]/8 text-[#534AB7] dark:text-white font-bold text-sm transition-all text-center flex items-center justify-center gap-1.5"
+                    >
+                      Ir a la App (Plan Básico)
+                    </Link>
+                  </>
+                )
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleSubscribeClick("monthly")}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-[#ff477e]/20 transition-all text-center hover:scale-[1.02]"
+                  >
+                    Adquirir Premium Pro
+                  </button>
+                  <Link
+                    href="/app"
+                    className="px-8 py-3.5 rounded-full border-2 border-[#534AB7] hover:bg-[#534AB7]/8 text-[#534AB7] dark:text-white font-bold text-sm transition-all text-center flex items-center justify-center gap-1.5"
+                  >
+                    Comenzar gratis (Básico)
+                  </Link>
+                </>
+              )}
             </motion.div>
 
             {/* Social proof */}
@@ -511,22 +599,23 @@ export default function LandingPage() {
           </div>
 
           {/* ── Columna DERECHA: celular + polaroids ── */}
-          <div className="col-span-12 md:col-span-3 flex justify-center items-center relative min-h-[280px] md:min-h-[420px]">
-            <div className="relative w-full max-w-[220px] md:max-w-none mx-auto">
-              {/* Imagen celular/polaroids */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="rounded-[2rem] overflow-hidden shadow-2xl border border-white/60"
-              >
-                <img
-                  src="/parte derecha.webp"
-                  alt="App de manifestación en celular con polaroids"
-                  className="w-full h-auto object-cover"
-                />
-              </motion.div>
-            </div>
+          <div className="col-span-12 md:col-span-3 relative overflow-hidden h-full">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="w-full h-full"
+              style={{
+                maskImage: "linear-gradient(to left, black 65%, transparent 95%)",
+                WebkitMaskImage: "linear-gradient(to left, black 65%, transparent 95%)"
+              }}
+            >
+              <img
+                src="/parte derecha.webp"
+                alt="App de manifestación en celular con polaroids"
+                className="w-full h-full object-cover object-right select-none"
+              />
+            </motion.div>
           </div>
 
         </div>
@@ -586,13 +675,22 @@ export default function LandingPage() {
             </Link>
           </div>
           
-          {/* Right Side: Comenzar gratis Button */}
-          <Link
-            href="/app"
-            className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15"
-          >
-            Comenzar gratis
-          </Link>
+          {/* Right Side: Comenzar gratis / Ir a la App Button */}
+          {user ? (
+            <Link
+              href="/app"
+              className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15 flex items-center gap-1"
+            >
+              Ir a la App {isPro && <span className="text-[8px] bg-white/20 text-white px-1 py-0.2 rounded-full font-black uppercase">PRO</span>}
+            </Link>
+          ) : (
+            <button
+              onClick={() => handleSubscribeClick("monthly")}
+              className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff477e] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff477e]/15"
+            >
+              Probar Pro
+            </button>
+          )}
         </header>
 
         {/* Hero Section Container */}
@@ -642,19 +740,49 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col gap-2 w-full max-w-[210px] mt-3"
             >
-              <Link
-                href="/app"
-                className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
-              >
-                Comenzar gratis
-                <span className="text-[10px]">❯</span>
-              </Link>
-              <a
-                href="#demo"
-                className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
-              >
-                <span className="inline-block scale-75">▶</span> Ver cómo funciona
-              </a>
+              {user ? (
+                isPro ? (
+                  <Link
+                    href="/app"
+                    className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
+                  >
+                    Ir a la App (Premium)
+                    <span className="text-[10px]">❯</span>
+                  </Link>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleSubscribeClick("monthly")}
+                      className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
+                    >
+                      Adquirir Premium Pro
+                      <span className="text-[10px]">❯</span>
+                    </button>
+                    <Link
+                      href="/app"
+                      className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                    >
+                      Ir a la App (Básico)
+                    </Link>
+                  </>
+                )
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleSubscribeClick("monthly")}
+                    className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#ff8a00] to-[#8b5cf6] text-white font-bold text-xs shadow-md shadow-[#ff8a00]/15 transition-all text-center flex items-center justify-center gap-1"
+                  >
+                    Adquirir Premium Pro
+                    <span className="text-[10px]">❯</span>
+                  </button>
+                  <Link
+                    href="/app"
+                    className="w-full py-2 rounded-full border border-[#8b5cf6]/40 text-[#8b5cf6] font-bold text-xs bg-white/40 backdrop-blur-sm transition-all text-center flex items-center justify-center gap-1"
+                  >
+                    Comenzar gratis
+                  </Link>
+                </>
+              )}
             </motion.div>
           </div>
         </div>
@@ -927,12 +1055,52 @@ export default function LandingPage() {
       {/* ─── PLANES DE PRECIO ─── */}
       <section id="precios" className="py-24 border-t border-black/5 dark:border-white/5 relative z-10">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center space-y-4 mb-16">
+          <div className="text-center space-y-4 mb-8">
             <h2 className="text-xs font-bold text-[#534AB7] dark:text-accent-gold uppercase tracking-widest">Planes</h2>
             <p className="text-3xl sm:text-4xl font-black text-[#1a1625] dark:text-white tracking-tight">Empieza gratis. Eleva tu frecuencia.</p>
             <p className="text-[#6b667a] dark:text-slate-400 max-w-xl mx-auto">Comienza sin costo. Cuando estés lista para ir más profundo, el plan Pro te espera.</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+
+          {/* Selector de Plan (Mensual / Anual) */}
+          <div className="flex max-w-[280px] mx-auto p-1 bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl mb-10 relative">
+            <button
+              type="button"
+              onClick={() => setPricingPeriod("monthly")}
+              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 ${
+                pricingPeriod === "monthly" ? "text-[#534AB7] dark:text-white" : "text-[#6b667a] hover:text-[#1a1625] dark:hover:text-white"
+              }`}
+            >
+              Mensual
+              {pricingPeriod === "monthly" && (
+                <motion.div
+                  layoutId="pricing-active"
+                  className="absolute inset-0 bg-white dark:bg-white/10 border border-black/5 dark:border-white/10 rounded-xl -z-10 shadow-sm"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPricingPeriod("yearly")}
+              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 flex items-center justify-center gap-1.5 ${
+                pricingPeriod === "yearly" ? "text-[#534AB7] dark:text-white" : "text-[#6b667a] hover:text-[#1a1625] dark:hover:text-white"
+              }`}
+            >
+              Anual
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-300 text-[8px] font-black uppercase">
+                Ahorra 33%
+              </span>
+              {pricingPeriod === "yearly" && (
+                <motion.div
+                  layoutId="pricing-active"
+                  className="absolute inset-0 bg-white dark:bg-white/10 border border-black/5 dark:border-white/10 rounded-xl -z-10 shadow-sm"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto font-sans">
             {/* Plan Gratis */}
             <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-8 rounded-3xl flex flex-col gap-6 border border-white/80 dark:border-white/10 shadow-sm">
               <div>
@@ -945,7 +1113,11 @@ export default function LandingPage() {
                   <li key={item} className="flex items-start gap-2.5 text-sm text-[#6b667a]"><span className="text-[#534AB7] mt-0.5 shrink-0">✓</span>{item}</li>
                 ))}
               </ul>
-              <Link href="/app" className="w-full py-3.5 rounded-xl border-2 border-[#534AB7]/40 text-[#534AB7] font-bold text-center hover:bg-[#534AB7]/5 transition-all">Empezar Gratis</Link>
+              {user ? (
+                <Link href="/app" className="w-full py-3.5 rounded-xl border-2 border-[#534AB7]/40 text-[#534AB7] font-bold text-center hover:bg-[#534AB7]/5 transition-all block">Ir a la App</Link>
+              ) : (
+                <Link href="/app" className="w-full py-3.5 rounded-xl border-2 border-[#534AB7]/40 text-[#534AB7] font-bold text-center hover:bg-[#534AB7]/5 transition-all block">Empezar Gratis</Link>
+              )}
             </div>
             {/* Plan Pro */}
             <div className="relative rounded-3xl p-[1.5px] bg-gradient-to-br from-[#ff477e] to-[#534AB7] shadow-2xl">
@@ -953,15 +1125,32 @@ export default function LandingPage() {
               <div className="bg-white dark:bg-[#0c0721] rounded-[calc(1.5rem-1.5px)] p-8 flex flex-col gap-6 h-full">
                 <div>
                   <p className="text-xs font-bold text-[#534AB7] dark:text-accent-gold uppercase tracking-widest mb-2">Pro — Manifestación Plena</p>
-                  <div className="flex items-baseline gap-2"><p className="text-4xl font-black text-[#1a1625] dark:text-white">$5.99</p><p className="text-[#6b667a] text-sm">/ mes</p></div>
-                  <p className="text-[#6b667a] text-sm mt-1">O $47.99/año — ahorra 33%</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-4xl font-black text-[#1a1625] dark:text-white">
+                      {pricingPeriod === "monthly" ? "$5.99" : "$47.99"}
+                    </p>
+                    <p className="text-[#6b667a] text-sm">
+                      {pricingPeriod === "monthly" ? "/ mes" : "/ año"}
+                    </p>
+                  </div>
+                  <p className="text-[#6b667a] text-xs mt-1">
+                    {pricingPeriod === "monthly" ? "O $47.99/año — ahorra 33%" : "Ahorra 33% ($3.99/mes)"}
+                  </p>
                 </div>
-                <ul className="space-y-3 flex-1">
+                <ul className="space-y-3 flex-1 font-medium">
                   {["Coach de IA — mensajes ilimitados ∞", "Triángulos de Manifestación ilimitados ∞", "Retos de 30 Días personalizados con IA", "Diario de gratitud ilimitado ∞", "Metas ilimitadas con avance por días", "Decretos de abundancia guardados", "Visualizaciones cuánticas ilimitadas"].map(item => (
                     <li key={item} className="flex items-start gap-2.5 text-sm text-[#6b667a] dark:text-slate-350"><span className="text-[#fbbf24] mt-0.5 shrink-0">✦</span>{item}</li>
                   ))}
                 </ul>
-                <Link href="/app" className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-90 text-white font-bold text-center transition-all shadow-lg">Empezar Pro — 7 días gratis</Link>
+                {user ? (
+                  isPro ? (
+                    <Link href="/app" className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-90 text-white font-bold text-center transition-all shadow-lg block">Ir a la App (Premium Activo)</Link>
+                  ) : (
+                    <button onClick={() => handleSubscribeClick(pricingPeriod)} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-90 text-white font-bold text-center transition-all shadow-lg">Empezar Pro — 7 días gratis</button>
+                  )
+                ) : (
+                  <button onClick={() => handleSubscribeClick(pricingPeriod)} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ff477e] to-[#534AB7] hover:opacity-90 text-white font-bold text-center transition-all shadow-lg">Empezar Pro — 7 días gratis</button>
+                )}
               </div>
             </div>
           </div>

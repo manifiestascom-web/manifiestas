@@ -19,7 +19,7 @@ type DBMessage = {
 const WELCOME_MESSAGE = {
   id: 'welcome',
   role: 'assistant' as const,
-  parts: [{ type: 'text' as const, text: '👋 Hola! Soy tu coach de manifestación. ¿En qué área de tu vida quieres enfocarte hoy — dinero, amor, salud, o algo más?' }]
+  parts: [{ type: 'text' as const, text: 'Te doy la bienvenida a este espacio de co-creación consciente. Estoy aquí para acompañarte a sintonizar con tu máximo potencial. Dime, ¿en qué área de tu vida sientes que es momento de derribar límites hoy?' }]
 };
 
 const QUICK_PROMPTS = [
