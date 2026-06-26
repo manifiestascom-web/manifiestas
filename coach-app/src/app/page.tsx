@@ -128,9 +128,9 @@ export default function LandingPage() {
 
   const handleSubscribeClick = (plan: "monthly" | "yearly") => {
     if (user) {
-      window.location.href = `/paywall?plan=${plan}&auto=true`;
+      window.location.href = `/paywall?plan=${plan}`;
     } else {
-      const nextUrl = encodeURIComponent(`/paywall?plan=${plan}&auto=true`);
+      const nextUrl = encodeURIComponent(`/paywall?plan=${plan}`);
       window.location.href = `/login?next=${nextUrl}`;
     }
   };

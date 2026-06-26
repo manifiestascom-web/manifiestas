@@ -10,7 +10,9 @@ import {
   IconLock, 
   IconUser, 
   IconArrowRight, 
-  IconLoader2
+  IconLoader2,
+  IconSun,
+  IconMoon
 } from "@tabler/icons-react";
 import { createClient } from "@/utils/supabase/client";
 import * as fpixel from "@/utils/fpixel";
@@ -27,6 +29,26 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [redirectTo, setRedirectTo] = useState("/app");
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(isDark ? 'dark' : 'light');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    if (theme === 'dark') {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setTheme('light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setTheme('dark');
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -118,6 +140,16 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background text-text-primary flex flex-col justify-center items-center p-4 relative overflow-hidden select-none">
       
+      {/* Botón de alternar tema */}
+      <button 
+        onClick={toggleTheme}
+        type="button"
+        className="absolute top-6 right-6 p-2.5 rounded-xl bg-bg-secondary/80 border border-border-primary hover:bg-bg-secondary transition-all text-text-primary z-20 cursor-pointer shadow-sm"
+        aria-label="Cambiar tema"
+      >
+        {theme === 'dark' ? <IconSun size={18} className="text-accent-gold" /> : <IconMoon size={18} className="text-text-primary" />}
+      </button>
+
       {/* Círculos de brillo decorativos en el fondo */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-accent-purple/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -135,7 +167,7 @@ export default function LoginPage() {
               manifiestas
             </span>
           </Link>
-          <h1 className="text-2xl font-black tracking-tight text-text-primary">
+          <h1 className="text-3xl md:text-2xl font-black font-serif tracking-tight text-[#0b2253] dark:text-white">
             {isSignUp ? "Crear cuenta cuántica" : "Iniciar Alineación"}
           </h1>
           <p className="text-text-secondary text-xs sm:text-sm mt-1 max-w-[280px]">
@@ -240,7 +272,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl border-none text-[14px] font-bold tracking-wide transition-all bg-primary hover:bg-primary-dark text-white flex justify-center items-center gap-2 shadow-lg shadow-primary/10 disabled:opacity-50 active:scale-[0.98]"
+            className="w-full py-4 text-[16px] md:py-3.5 md:text-[14px] rounded-xl border-none font-bold tracking-wide transition-all bg-primary hover:bg-primary-dark text-white flex justify-center items-center gap-2 shadow-lg shadow-primary/10 disabled:opacity-50 active:scale-[0.98]"
           >
             {loading ? (
               <IconLoader2 size={18} className="animate-spin" />
@@ -264,7 +296,7 @@ export default function LoginPage() {
           onClick={handleGoogleLogin}
           disabled={loading}
           type="button"
-          className="w-full py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 dark:border-border-secondary dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 text-sm font-semibold flex justify-center items-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer shadow-sm"
+          className="w-full py-3.5 text-base md:py-3 md:text-sm rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 dark:border-border-secondary dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 font-semibold flex justify-center items-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer shadow-sm"
         >
           <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
