@@ -283,7 +283,7 @@ export default function VisualizeTab() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="p-4 sm:p-6 overflow-y-auto h-full pb-24 no-scrollbar"
+            className="p-4 sm:p-6 overflow-y-auto overscroll-y-contain h-full pb-24 no-scrollbar"
           >
             <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-4 pl-1">Técnicas Guiadas Cuánticas</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -886,7 +886,7 @@ export default function VisualizeTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="p-4 sm:p-6 h-full flex flex-col items-center justify-start bg-slate-900 text-white relative overflow-y-auto no-scrollbar pb-24 text-center pt-16 sm:pt-20"
+            className="p-4 sm:p-6 h-full flex flex-col items-center justify-start bg-slate-900 text-white relative overflow-y-auto overscroll-y-contain no-scrollbar pb-24 text-center pt-16 sm:pt-20"
           >
             {/* Botón de cerrar */}
             <button 

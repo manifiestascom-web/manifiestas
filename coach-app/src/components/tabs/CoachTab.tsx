@@ -159,7 +159,7 @@ export default function CoachTab() {
           <UsageBadge used={dailyMessageCount} limit={FREE_DAILY_LIMIT} label="mensajes hoy" isPro={isPro} />
         </div>
       )}
-      <div className="flex-1 overflow-y-auto pr-2 no-scrollbar flex flex-col gap-4 pb-4">
+      <div className="flex-1 overflow-y-auto overscroll-y-contain pr-2 no-scrollbar flex flex-col gap-4 pb-4">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div

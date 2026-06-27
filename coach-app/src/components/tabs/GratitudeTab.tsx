@@ -137,7 +137,7 @@ export default function GratitudeTab() {
   };
 
   return (
-    <div className="absolute inset-0 p-4 sm:p-6 overflow-y-auto no-scrollbar pb-24 bg-bg-primary">
+    <div className="absolute inset-0 p-4 sm:p-6 overflow-y-auto overscroll-y-contain no-scrollbar pb-24 bg-bg-primary">
       {loading ? (
         <div className="h-full flex items-center justify-center">
           <IconLoader2 size={32} className="animate-spin text-primary" />

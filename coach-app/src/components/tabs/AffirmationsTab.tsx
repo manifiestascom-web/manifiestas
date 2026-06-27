@@ -286,7 +286,7 @@ export default function AffirmationsTab() {
     const streak = calculateStreak(activeChallenge.completed_days);
 
     return (
-      <div className="absolute inset-0 p-4 sm:p-6 overflow-y-auto no-scrollbar pb-24 bg-bg-primary">
+      <div className="absolute inset-0 p-4 sm:p-6 overflow-y-auto overscroll-y-contain no-scrollbar pb-24 bg-bg-primary">
         
         {/* Cabecera del Reto */}
         <div className="bg-bg-secondary border border-border-primary rounded-2xl p-5 mb-6 relative overflow-hidden shadow-sm">
@@ -450,7 +450,7 @@ export default function AffirmationsTab() {
 
   // Vista Normal de Afirmaciones (Si no hay reto activo)
   return (
-    <div className="absolute inset-0 p-4 sm:p-6 overflow-y-auto no-scrollbar pb-24">
+    <div className="absolute inset-0 p-4 sm:p-6 overflow-y-auto overscroll-y-contain no-scrollbar pb-24">
       
       {/* Caja de Afirmación del día */}
       <div className="bg-bg-secondary rounded-2xl p-6 text-center border border-border-primary mb-6 min-h-[140px] flex items-center justify-center relative overflow-hidden shadow-inner">
