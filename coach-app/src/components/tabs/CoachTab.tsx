@@ -152,7 +152,7 @@ export default function CoachTab() {
   }
 
   return (
-    <div className="flex flex-col h-full absolute inset-0 p-4 sm:p-6 pb-24 bg-bg-primary">
+    <div className="flex flex-col h-full absolute inset-0 p-4 sm:p-6 pb-4 sm:pb-6 bg-bg-primary">
       {/* Badge de uso diario */}
       {!isPro && (
         <div className="flex justify-end mb-2">
