@@ -25,48 +25,27 @@ export async function POST(req: Request) {
     });
 
     const body = await req.json().catch(() => ({}));
-    const planType: 'monthly' | 'yearly' | 'test' = body?.planType || 'monthly';
+    const planType = body?.planType === 'yearly' ? 'yearly' : 'monthly';
     const testEventCode = body?.testEventCode || '';
 
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
-    let lineItems: any[] = [];
+    const priceId = planType === 'yearly' 
+      ? process.env.STRIPE_PRICE_ID_YEARLY 
+      : process.env.STRIPE_PRICE_ID;
 
-    if (planType === 'test') {
-      lineItems = [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Acceso de Prueba Premium (1 USD)',
-              description: 'Acceso de prueba a Manifiestas Pro',
-            },
-            unit_amount: 100, // 100 centavos = $1.00 USD
-            recurring: {
-              interval: 'month',
-            },
-          },
-          quantity: 1,
-        },
-      ];
-    } else {
-      const priceId = planType === 'yearly' 
-        ? process.env.STRIPE_PRICE_ID_YEARLY 
-        : process.env.STRIPE_PRICE_ID;
-
-      if (!priceId || priceId === 'price_mockid' || priceId === 'price_mockyearlyid') {
-        return NextResponse.json({ 
-          error: `${planType === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID'} no está configurada en .env.local.` 
-        }, { status: 400 });
-      }
-
-      lineItems = [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ];
+    if (!priceId || priceId === 'price_mockid' || priceId === 'price_mockyearlyid') {
+      return NextResponse.json({ 
+        error: `${planType === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID'} no está configurada en las variables de entorno.` 
+      }, { status: 400 });
     }
+
+    const lineItems = [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ];
 
     const successRedirect = testEventCode 
       ? `${origin}/app?checkout=success&test_event_code=${encodeURIComponent(testEventCode)}`
