@@ -28,10 +28,17 @@ export default function AppHome() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("checkout") === "success") {
-        // Track Subscribe event for Meta Pixel
+        // Track Purchase and Subscribe events for Meta Pixel
+        fpixel.event("Purchase", {
+          value: 5.99,
+          currency: "USD",
+          content_name: "Plan Premium Mensual",
+          content_category: "Suscripción"
+        });
         fpixel.event("Subscribe", {
           value: 5.99,
           currency: "USD",
+          content_name: "Plan Premium Mensual",
           content_category: "Suscripción"
         });
 
