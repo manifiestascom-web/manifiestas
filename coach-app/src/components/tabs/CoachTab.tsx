@@ -159,33 +159,30 @@ export default function CoachTab() {
   // Límite diario: usar el conteo del día actual
   const isLimitReached = dailyMessageCount >= FREE_DAILY_LIMIT && !isPro;
 
-  const handleSend = async (e: React.FormEvent) => {
+  const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedInput = input.trim();
     if (!trimmedInput || !user || isLimitReached || isTyping) return;
 
-    try {
-      await sendMessage({
-        text: trimmedInput,
-      });
-      setInput('');
-      setDailyMessageCount(prev => prev + 1);
-      setTimeout(() => scrollToBottom(true), 50);
-    } catch (err) {
+    setInput('');
+    setDailyMessageCount(prev => prev + 1);
+    setTimeout(() => scrollToBottom(true), 50);
+
+    sendMessage({
+      text: trimmedInput,
+    }).catch(err => {
       console.error("Error al enviar mensaje:", err);
-    }
+    });
   };
 
-  const handleQuickPrompt = async (promptText: string) => {
+  const handleQuickPrompt = (promptText: string) => {
     if (!user || isLimitReached || isTyping) return;
-    try {
-      await sendMessage({
-        text: promptText,
-      });
-      setTimeout(() => scrollToBottom(true), 50);
-    } catch (err) {
+    setTimeout(() => scrollToBottom(true), 50);
+    sendMessage({
+      text: promptText,
+    }).catch(err => {
       console.error("Error al enviar sugerencia rápida:", err);
-    }
+    });
   };
 
   const showQuickPrompts = messages.length <= 1 && !isTyping && !isLimitReached;
