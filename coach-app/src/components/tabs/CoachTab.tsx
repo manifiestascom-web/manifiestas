@@ -54,6 +54,9 @@ export default function CoachTab() {
     transport: new TextStreamChatTransport({
       api: '/api/chat',
     }),
+    onError: (err) => {
+      console.error("Error en la conexión del chat:", err);
+    }
   });
 
   const isTyping = status === 'submitted' || status === 'streaming';
@@ -161,7 +164,18 @@ export default function CoachTab() {
       )}
       <div className="flex-1 overflow-y-auto overscroll-y-contain pr-2 no-scrollbar flex flex-col gap-4 pb-4">
         <AnimatePresence initial={false}>
-          {messages.map((msg) => (
+          {messages.filter(msg => {
+            if (msg.role === 'assistant') {
+              let text = (msg as any).content || '';
+              if (!text && msg.parts && Array.isArray(msg.parts)) {
+                text = msg.parts.map((p: any) => p.text || p.content || '').join('');
+              }
+              // Si es el mensaje en streaming activo, permitirlo
+              if (isTyping && msg.id === messages[messages.length - 1]?.id) return true;
+              return text.trim().length > 0;
+            }
+            return true;
+          }).map((msg) => (
             <motion.div
               key={msg.id}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -172,15 +186,18 @@ export default function CoachTab() {
                   : 'bg-primary text-white rounded-br-none self-end'
               }`}
             >
-              {msg.parts && Array.isArray(msg.parts) ? (
+              {msg.parts && Array.isArray(msg.parts) && msg.parts.length > 0 ? (
                 msg.parts.map((part: any, idx: number) => {
                   if (part.type === 'text') {
-                    return <React.Fragment key={idx}>{part.text}</React.Fragment>;
+                    return <React.Fragment key={idx}>{part.text || part.content || ''}</React.Fragment>;
+                  }
+                  if (typeof part === 'string') {
+                    return <React.Fragment key={idx}>{part}</React.Fragment>;
                   }
                   return null;
                 })
               ) : (
-                (msg as any).content
+                (msg as any).content || (msg as any).text || ''
               )}
             </motion.div>
           ))}

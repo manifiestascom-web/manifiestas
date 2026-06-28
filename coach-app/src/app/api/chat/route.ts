@@ -5,6 +5,11 @@ import { streamText, convertToModelMessages } from 'ai';
 
 export async function POST(request: Request) {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("CRÍTICO: OPENAI_API_KEY no está definida en las variables de entorno.");
+      return new NextResponse('Error de configuración: falta OPENAI_API_KEY en el servidor', { status: 500 });
+    }
+
     const supabase = await createClient();
     
     // 1. Validar autenticación
