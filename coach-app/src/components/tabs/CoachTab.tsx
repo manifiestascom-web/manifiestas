@@ -37,11 +37,20 @@ export default function CoachTab() {
   const [input, setInput] = useState('');
   const [dailyMessageCount, setDailyMessageCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const FREE_DAILY_LIMIT = 3;
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (force = false) => {
+    if (!scrollContainerRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    const container = scrollContainerRef.current;
+    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 250;
+    if (force || isNearBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Inicializar useChat con la API de chat y tipo UIMessage
@@ -111,7 +120,7 @@ export default function CoachTab() {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottom(false);
   }, [messages, isTyping]);
 
   // Límite diario: usar el conteo del día actual
@@ -128,6 +137,7 @@ export default function CoachTab() {
       });
       setInput('');
       setDailyMessageCount(prev => prev + 1);
+      setTimeout(() => scrollToBottom(true), 50);
     } catch (err) {
       console.error("Error al enviar mensaje:", err);
     }
@@ -139,6 +149,7 @@ export default function CoachTab() {
       await sendMessage({
         text: promptText,
       });
+      setTimeout(() => scrollToBottom(true), 50);
     } catch (err) {
       console.error("Error al enviar sugerencia rápida:", err);
     }
@@ -162,7 +173,11 @@ export default function CoachTab() {
           <UsageBadge used={dailyMessageCount} limit={FREE_DAILY_LIMIT} label="mensajes hoy" isPro={isPro} />
         </div>
       )}
-      <div className="flex-1 overflow-y-auto overscroll-y-contain pr-2 no-scrollbar flex flex-col gap-4 pb-4">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto pr-2 flex flex-col gap-4 pb-4 touch-pan-y"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         <AnimatePresence initial={false}>
           {messages.filter(msg => {
             if (msg.role === 'assistant') {
