@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useChat } from '@ai-sdk/react';
 import { TextStreamChatTransport } from 'ai';
-import { IconSend, IconLoader2, IconSparkles, IconArrowUpRight } from '@tabler/icons-react';
+import { IconSend, IconLoader2, IconSparkles, IconArrowUpRight, IconArrowDown } from '@tabler/icons-react';
 import UsageBadge from '@/components/layout/UsageBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
@@ -36,6 +36,8 @@ export default function CoachTab() {
   const [isPro, setIsPro] = useState(false);
   const [input, setInput] = useState('');
   const [dailyMessageCount, setDailyMessageCount] = useState(0);
+  const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
+  const [hasNewResponseAbove, setHasNewResponseAbove] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +52,17 @@ export default function CoachTab() {
     const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 250;
     if (force || isNearBottom) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setHasNewResponseAbove(false);
+    }
+  };
+
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const isScrolledUp = container.scrollHeight - container.scrollTop - container.clientHeight > 200;
+    setShowScrollBottomBtn(isScrolledUp);
+    if (!isScrolledUp) {
+      setHasNewResponseAbove(false);
     }
   };
 
@@ -119,8 +132,28 @@ export default function CoachTab() {
     fetchUserAndMessages();
   }, []);
 
+  // Al terminar de cargar inicialmente, hacer scroll automático hasta el final
   useEffect(() => {
-    scrollToBottom(false);
+    if (!loading) {
+      setTimeout(() => {
+        scrollToBottom(true);
+      }, 100);
+    }
+  }, [loading]);
+
+  // Al llegar nuevos mensajes o al estar escribiendo la IA
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const isScrolledUp = container.scrollHeight - container.scrollTop - container.clientHeight > 200;
+      if (isScrolledUp) {
+        if (isTyping || messages[messages.length - 1]?.role === 'assistant') {
+          setHasNewResponseAbove(true);
+        }
+      } else {
+        scrollToBottom(false);
+      }
+    }
   }, [messages, isTyping]);
 
   // Límite diario: usar el conteo del día actual
@@ -175,7 +208,8 @@ export default function CoachTab() {
       )}
       <div 
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto pr-2 flex flex-col gap-4 pb-4 touch-pan-y"
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto pr-2 flex flex-col gap-4 pb-4 touch-pan-y relative"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <AnimatePresence initial={false}>
@@ -255,6 +289,36 @@ export default function CoachTab() {
         )}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Botón flotante de notificación de nueva respuesta / ir abajo */}
+      <AnimatePresence>
+        {(showScrollBottomBtn || hasNewResponseAbove) && (
+          <motion.button
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            onClick={() => scrollToBottom(true)}
+            className={`self-center mb-2 z-20 px-4 py-2 rounded-full text-xs font-bold shadow-xl border flex items-center gap-2 transition-all cursor-pointer ${
+              hasNewResponseAbove
+                ? 'bg-primary text-white border-primary/40 shadow-primary/30 animate-bounce'
+                : 'bg-bg-secondary text-text-primary border-border-primary hover:bg-bg-primary'
+            }`}
+          >
+            {hasNewResponseAbove ? (
+              <>
+                <IconSparkles size={14} className="text-accent-gold animate-spin" />
+                <span>Nueva respuesta en curso...</span>
+                <IconArrowDown size={14} />
+              </>
+            ) : (
+              <>
+                <span>Ir al último mensaje</span>
+                <IconArrowDown size={14} />
+              </>
+            )}
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Bloque de Entrada o Muro de Pago Inline */}
       {isLimitReached ? (
