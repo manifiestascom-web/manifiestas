@@ -11,6 +11,27 @@ function NavigationTracker() {
 
   useEffect(() => {
     fpixel.pageview();
+
+    if (searchParams.get("checkout") === "success") {
+      fpixel.event("Purchase", {
+        value: 5.99,
+        currency: "USD",
+        content_name: "Plan Premium Mensual",
+        content_category: "Suscripción"
+      });
+      fpixel.event("Subscribe", {
+        value: 5.99,
+        currency: "USD",
+        content_name: "Plan Premium Mensual",
+        content_category: "Suscripción"
+      });
+
+      // Limpiar la URL para evitar duplicar el evento al recargar
+      if (typeof window !== "undefined") {
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState(null, "", cleanUrl);
+      }
+    }
   }, [pathname, searchParams]);
 
   return null;
