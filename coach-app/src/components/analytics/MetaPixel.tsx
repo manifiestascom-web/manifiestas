@@ -26,10 +26,12 @@ function NavigationTracker() {
         content_category: "Suscripción"
       });
 
-      // Limpiar la URL para evitar duplicar el evento al recargar
+      // Limpiar la URL después de un breve retraso para asegurar transmisión
       if (typeof window !== "undefined") {
-        const cleanUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState(null, "", cleanUrl);
+        setTimeout(() => {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState(null, "", cleanUrl);
+        }, 2000);
       }
     }
   }, [pathname, searchParams]);

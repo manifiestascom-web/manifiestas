@@ -42,9 +42,11 @@ export default function AppHome() {
           content_category: "Suscripción"
         });
 
-        // Clean URL to prevent double tracking on page refreshes
-        const cleanUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState(null, "", cleanUrl);
+        // Clean URL after short delay to prevent double tracking on page refreshes while ensuring network transmission
+        setTimeout(() => {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState(null, "", cleanUrl);
+        }, 2000);
       }
     }
   }, []);
