@@ -61,7 +61,7 @@ Debes responder ÚNICAMENTE con un objeto JSON que contenga un array llamado "da
 
 No añadas explicaciones, introducciones, ni textos aclaratorios antes o después del JSON. Devuelve únicamente el objeto JSON válido.`;
 
-    // 4. Llamar a Gemini 2.5 Flash
+    // 4. Llamar a ChatGPT mini (gpt-4o-mini)
     const { text } = await generateText({
       model: openai('gpt-4o-mini'),
       prompt: prompt,

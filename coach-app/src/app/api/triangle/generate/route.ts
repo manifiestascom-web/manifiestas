@@ -63,7 +63,7 @@ Respuesta: "Estoy manifestando abundancia financiera ilimitada y disfruto de una
 
 Devuelve únicamente la afirmación generada en formato de texto plano, sin comillas ni explicaciones adicionales.`;
 
-    // 4. Llamar a Gemini 2.5 Flash
+    // 4. Llamar a ChatGPT mini (gpt-4o-mini)
     const { text } = await generateText({
       model: openai('gpt-4o-mini'),
       prompt: prompt,

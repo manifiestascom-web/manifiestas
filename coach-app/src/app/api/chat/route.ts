@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         .join('');
     }
 
-    // Guardar el mensaje del usuario en Supabase antes de llamar a Gemini
+    // Guardar el mensaje del usuario en Supabase antes de llamar a ChatGPT mini
     const { error: saveUserErr } = await supabase
       .from('chat_messages')
       .insert({
@@ -89,7 +89,7 @@ TU ESENCIA Y FILOSOFÍA:
     // Convertir el historial de mensajes al formato de CoreMessage del SDK de IA
     const formattedMessages = await convertToModelMessages(messages);
 
-    // 6. Generar el stream de texto con Gemini 2.5 Flash
+    // 6. Generar el stream de texto con ChatGPT mini (gpt-4o-mini)
     const result = await streamText({
       model: openai('gpt-4o-mini'),
       system: systemPrompt,
