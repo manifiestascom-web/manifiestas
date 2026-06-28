@@ -29,12 +29,15 @@ export default function PaywallPage() {
     setErrorMsg("");
 
     try {
+      const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+      const testEventCode = params.get("test_event_code") || (typeof window !== "undefined" ? (window as any)._metaTestCode : "") || "";
+
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ planType: plan }),
+        body: JSON.stringify({ planType: plan, testEventCode }),
       });
 
       const data = await response.json();

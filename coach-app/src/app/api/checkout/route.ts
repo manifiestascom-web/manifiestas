@@ -26,6 +26,7 @@ export async function POST(req: Request) {
 
     const body = await req.json().catch(() => ({}));
     const planType: 'monthly' | 'yearly' | 'test' = body?.planType || 'monthly';
+    const testEventCode = body?.testEventCode || '';
 
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
@@ -67,13 +68,17 @@ export async function POST(req: Request) {
       ];
     }
 
+    const successRedirect = testEventCode 
+      ? `${origin}/app?checkout=success&test_event_code=${encodeURIComponent(testEventCode)}`
+      : `${origin}/app?checkout=success`;
+
     // Crear la sesión de checkout en Stripe para la suscripción seleccionada
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: user.email,
       line_items: lineItems,
       mode: 'subscription',
-      success_url: `${origin}/app?checkout=success`,
+      success_url: successRedirect,
       cancel_url: `${origin}/paywall?checkout=cancel`,
       metadata: {
         user_id: user.id,

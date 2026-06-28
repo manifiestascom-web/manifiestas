@@ -19,14 +19,27 @@ export const initFbq = () => {
 export const pageview = () => {
   if (typeof window !== 'undefined') {
     initFbq();
+    const params = new URLSearchParams(window.location.search);
+    const testCode = params.get('test_event_code');
+    if (testCode) {
+      (window as any).fbq('set', 'testEventCode', testCode);
+    }
     (window as any).fbq('track', 'PageView');
   }
 };
 
-export const event = (name: string, options = {}) => {
+export const event = (name: string, options: any = {}) => {
   if (typeof window !== 'undefined') {
     initFbq();
-    console.log(`[MetaPixel] Track event: ${name}`, options);
-    (window as any).fbq('track', name, options);
+    const params = new URLSearchParams(window.location.search);
+    const testCode = params.get('test_event_code') || (window as any)._metaTestCode;
+    const finalOptions = { ...options };
+    if (testCode) {
+      finalOptions.test_event_code = testCode;
+      (window as any)._metaTestCode = testCode;
+      (window as any).fbq('set', 'testEventCode', testCode);
+    }
+    console.log(`[MetaPixel] Track event: ${name}`, finalOptions);
+    (window as any).fbq('track', name, finalOptions);
   }
 };
