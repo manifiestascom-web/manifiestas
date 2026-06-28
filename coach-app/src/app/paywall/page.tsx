@@ -22,9 +22,9 @@ export default function PaywallPage() {
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly" | "test">("test");
 
-  const startStripeCheckout = async (plan: "monthly" | "yearly") => {
+  const startStripeCheckout = async (plan: "monthly" | "yearly" | "test") => {
     setPaying(true);
     setErrorMsg("");
 
@@ -45,10 +45,13 @@ export default function PaywallPage() {
 
       if (data.url) {
         // Track InitiateCheckout event for Meta Pixel
+        const planValue = plan === "yearly" ? 47.99 : plan === "test" ? 1.00 : 5.99;
+        const planName = plan === "yearly" ? "Plan Premium Anual" : plan === "test" ? "Plan Prueba $1" : "Plan Premium Mensual";
+
         fpixel.event("InitiateCheckout", {
-          value: plan === "yearly" ? 47.99 : 5.99,
+          value: planValue,
           currency: "USD",
-          content_name: plan === "yearly" ? "Plan Premium Anual" : "Plan Premium Mensual",
+          content_name: planName,
           content_category: "Suscripción",
         });
 
@@ -204,12 +207,28 @@ export default function PaywallPage() {
         >
           <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-primary/80 h-full flex flex-col justify-between">
             <div>
-              {/* Selector de Plan (Mensual / Anual) */}
-              <div className="flex p-1 bg-bg-secondary/60 border border-border-primary/50 rounded-2xl mb-6 relative">
+              {/* Selector de Plan (Prueba $1 / Mensual / Anual) */}
+              <div className="flex p-1 bg-bg-secondary/60 border border-border-primary/50 rounded-2xl mb-6 relative gap-1">
+                <button
+                  type="button"
+                  onClick={() => setBillingPeriod("test")}
+                  className={`flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl transition-all relative z-10 flex items-center justify-center gap-1 ${
+                    billingPeriod === "test" ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  ⚡ Prueba $1
+                  {billingPeriod === "test" && (
+                    <motion.div
+                      layoutId="billing-active"
+                      className="absolute inset-0 bg-primary/15 border border-primary/30 rounded-xl -z-10"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </button>
                 <button
                   type="button"
                   onClick={() => setBillingPeriod("monthly")}
-                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 ${
+                  className={`flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl transition-all relative z-10 ${
                     billingPeriod === "monthly" ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
@@ -225,13 +244,13 @@ export default function PaywallPage() {
                 <button
                   type="button"
                   onClick={() => setBillingPeriod("yearly")}
-                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all relative z-10 flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl transition-all relative z-10 flex items-center justify-center gap-1 ${
                     billingPeriod === "yearly" ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   Anual
-                  <span className="px-1.5 py-0.5 rounded-full bg-accent-gold/20 text-accent-gold text-[9px] font-black uppercase">
-                    Ahorra 33%
+                  <span className="hidden sm:inline px-1.5 py-0.5 rounded-full bg-accent-gold/20 text-accent-gold text-[9px] font-black uppercase">
+                    -33%
                   </span>
                   {billingPeriod === "yearly" && (
                     <motion.div
@@ -246,13 +265,18 @@ export default function PaywallPage() {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h3 className="font-black text-lg text-text-primary">
-                    {billingPeriod === "monthly" ? "Plan Premium Mensual" : "Plan Premium Anual"}
+                    {billingPeriod === "test" ? "Plan Prueba Premium" : billingPeriod === "monthly" ? "Plan Premium Mensual" : "Plan Premium Anual"}
                   </h3>
                   <p className="text-xs text-text-secondary">
-                    {billingPeriod === "monthly" ? "Cancela cuando quieras" : "Pago recurrente. Cancela cuando quieras"}
+                    {billingPeriod === "test" ? "Prueba por $1.00 USD. Cancela cuando quieras" : billingPeriod === "monthly" ? "Cancela cuando quieras" : "Pago recurrente. Cancela cuando quieras"}
                   </p>
                 </div>
-                {billingPeriod === "monthly" ? (
+                {billingPeriod === "test" ? (
+                  <div className="text-right">
+                    <span className="text-3xl font-black text-emerald-500">$1.00</span>
+                    <span className="text-xs text-text-secondary block">/ prueba</span>
+                  </div>
+                ) : billingPeriod === "monthly" ? (
                   <div className="text-right">
                     <span className="text-3xl font-black text-text-primary">$5.99</span>
                     <span className="text-xs text-text-secondary block">/ mes</span>
@@ -270,9 +294,9 @@ export default function PaywallPage() {
                 <div className="bg-bg-secondary/40 border border-border-primary/50 p-4 rounded-2xl space-y-3">
                   <div className="flex justify-between text-xs text-text-secondary">
                     <span>
-                      {billingPeriod === "monthly" ? "Suscripción Mensual" : "Suscripción Anual"}
+                      {billingPeriod === "test" ? "Acceso de Prueba" : billingPeriod === "monthly" ? "Suscripción Mensual" : "Suscripción Anual"}
                     </span>
-                    <span>{billingPeriod === "monthly" ? "$5.99" : "$47.99"}</span>
+                    <span>{billingPeriod === "test" ? "$1.00" : billingPeriod === "monthly" ? "$5.99" : "$47.99"}</span>
                   </div>
                   <div className="flex justify-between text-xs text-text-secondary">
                     <span>Impuestos</span>
@@ -280,7 +304,7 @@ export default function PaywallPage() {
                   </div>
                   <div className="border-t border-border-primary/50 pt-3 flex justify-between text-sm font-bold text-text-primary">
                     <span>Total hoy</span>
-                    <span>{billingPeriod === "monthly" ? "$5.99" : "$47.99"}</span>
+                    <span className={billingPeriod === "test" ? "text-emerald-500 font-black" : ""}>{billingPeriod === "test" ? "$1.00" : billingPeriod === "monthly" ? "$5.99" : "$47.99"}</span>
                   </div>
                 </div>
 

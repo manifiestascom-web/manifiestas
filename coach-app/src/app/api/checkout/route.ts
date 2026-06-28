@@ -25,30 +25,53 @@ export async function POST(req: Request) {
     });
 
     const body = await req.json().catch(() => ({}));
-    const planType = body?.planType === 'yearly' ? 'yearly' : 'monthly';
+    const planType: 'monthly' | 'yearly' | 'test' = body?.planType || 'monthly';
 
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
-    const priceId = planType === 'yearly' 
-      ? process.env.STRIPE_PRICE_ID_YEARLY 
-      : process.env.STRIPE_PRICE_ID;
+    let lineItems: any[] = [];
 
-    if (!priceId || priceId === 'price_mockid' || priceId === 'price_mockyearlyid') {
-      return NextResponse.json({ 
-        error: `${planType === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID'} no está configurada en .env.local. Crea un producto de suscripción recurrente en el dashboard de Stripe (modo prueba) y copia su Price ID.` 
-      }, { status: 400 });
+    if (planType === 'test') {
+      lineItems = [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Acceso de Prueba Premium (1 USD)',
+              description: 'Acceso de prueba a Manifiestas Pro',
+            },
+            unit_amount: 100, // 100 centavos = $1.00 USD
+            recurring: {
+              interval: 'month',
+            },
+          },
+          quantity: 1,
+        },
+      ];
+    } else {
+      const priceId = planType === 'yearly' 
+        ? process.env.STRIPE_PRICE_ID_YEARLY 
+        : process.env.STRIPE_PRICE_ID;
+
+      if (!priceId || priceId === 'price_mockid' || priceId === 'price_mockyearlyid') {
+        return NextResponse.json({ 
+          error: `${planType === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID'} no está configurada en .env.local.` 
+        }, { status: 400 });
+      }
+
+      lineItems = [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ];
     }
 
     // Crear la sesión de checkout en Stripe para la suscripción seleccionada
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: user.email,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: 'subscription',
       success_url: `${origin}/app?checkout=success`,
       cancel_url: `${origin}/paywall?checkout=cancel`,
