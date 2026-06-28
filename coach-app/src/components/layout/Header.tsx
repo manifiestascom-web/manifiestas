@@ -124,10 +124,10 @@ export default function Header() {
                 alert('Error al conectar con el portal de facturación.');
               }
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-gold/20 hover:bg-accent-gold/30 border border-accent-gold/30 text-xs font-bold text-accent-gold shadow-sm cursor-pointer transition-all"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-400 hover:from-emerald-600 hover:to-green-500 text-slate-950 font-black text-xs shadow-[0_0_15px_rgba(52,211,153,0.6)] border border-emerald-200/60 active:scale-95 transition-all cursor-pointer animate-pulse-subtle"
             title="Gestionar tu plan / Facturación de Stripe"
           >
-            <IconSparkles size={12} /> Premium Pro
+            <IconSparkles size={14} className="text-slate-950" stroke={3} /> Pro Activo
           </button>
         ) : (
           <Link 
