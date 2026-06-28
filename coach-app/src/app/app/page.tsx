@@ -24,32 +24,7 @@ export default function AppHome() {
     return () => window.removeEventListener("change-tab", handleTabChange);
   }, []);
 
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("checkout") === "success") {
-        // Track Purchase and Subscribe events for Meta Pixel
-        fpixel.event("Purchase", {
-          value: 5.99,
-          currency: "USD",
-          content_name: "Plan Premium Mensual",
-          content_category: "Suscripción"
-        });
-        fpixel.event("Subscribe", {
-          value: 5.99,
-          currency: "USD",
-          content_name: "Plan Premium Mensual",
-          content_category: "Suscripción"
-        });
 
-        // Clean URL after short delay to prevent double tracking on page refreshes while ensuring network transmission
-        setTimeout(() => {
-          const cleanUrl = window.location.pathname + window.location.hash;
-          window.history.replaceState(null, "", cleanUrl);
-        }, 2000);
-      }
-    }
-  }, []);
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-background transition-colors duration-300 sm:relative sm:min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 sm:px-4">

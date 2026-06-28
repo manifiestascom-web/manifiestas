@@ -13,25 +13,30 @@ function NavigationTracker() {
     fpixel.pageview();
 
     if (searchParams.get("checkout") === "success") {
-      fpixel.event("Purchase", {
-        value: 5.99,
-        currency: "USD",
-        content_name: "Plan Premium Mensual",
-        content_category: "Suscripción"
-      });
-      fpixel.event("Subscribe", {
-        value: 5.99,
-        currency: "USD",
-        content_name: "Plan Premium Mensual",
-        content_category: "Suscripción"
-      });
-
-      // Limpiar la URL después de un breve retraso para asegurar transmisión
       if (typeof window !== "undefined") {
-        setTimeout(() => {
-          const cleanUrl = window.location.pathname + window.location.hash;
-          window.history.replaceState(null, "", cleanUrl);
-        }, 2000);
+        const hasTracked = sessionStorage.getItem("tracked_checkout_success");
+        if (!hasTracked) {
+          sessionStorage.setItem("tracked_checkout_success", "true");
+
+          fpixel.event("Purchase", {
+            value: 5.99,
+            currency: "USD",
+            content_name: "Plan Premium Mensual",
+            content_category: "Suscripción"
+          });
+          fpixel.event("Subscribe", {
+            value: 5.99,
+            currency: "USD",
+            content_name: "Plan Premium Mensual",
+            content_category: "Suscripción"
+          });
+
+          setTimeout(() => {
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState(null, "", cleanUrl);
+            sessionStorage.removeItem("tracked_checkout_success");
+          }, 2000);
+        }
       }
     }
   }, [pathname, searchParams]);
